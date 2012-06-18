@@ -29,7 +29,7 @@ class Game
   end
   def play(card, player=current_player_index)
     p = @players[player]
-    p.battlefield << p.hand.pop
+    p.battlefield << p.hand.slice!(card)
   end
   
   # PHASES
