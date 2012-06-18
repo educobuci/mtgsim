@@ -1,6 +1,6 @@
 class Game
-  attr_reader :phase, :current_player
-  attr_accessor :current_player
+  attr_reader :phase
+  attr_accessor :current_player_index
   
   def start
     player1 = Player.new
@@ -15,17 +15,21 @@ class Game
     self.draw_card 0, 7
     self.draw_card 1, 7
   end
-  def players
-    @players
+  def current_player
+    @players[current_player_index]
   end
-  def hand(player=current_player)
+  def hand(player=current_player_index)
     @players[player].hand
   end
-  def draw_card(player=current_player, count=1)
+  def draw_card(player=current_player_index, count=1)
     count.times do
       p = @players[player]
       p.hand << p.library.pop
     end
+  end
+  def play(card, player=current_player_index)
+    p = @players[player]
+    p.battlefield << p.hand.pop
   end
   
   # PHASES
