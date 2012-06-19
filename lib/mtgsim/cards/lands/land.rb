@@ -1,5 +1,5 @@
 module Cards
   module Land
-    attr_accessor :mana
+    attr_accessor :color
   end
 end

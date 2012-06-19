@@ -3,7 +3,7 @@ module Cards
     include Land
     def initialize
       super "Island"
-      self.mana = :land
+      self.color = :blue
     end
   end
 end

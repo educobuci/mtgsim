@@ -27,11 +27,14 @@ class Game
       p.hand << p.library.pop
     end
   end
-  def play(card, player=current_player_index)
+  def play_card(card, player=current_player_index)
     p = @players[player]
     p.battlefield << p.hand.slice!(card)
   end
-  
+  def tap_card(card, player=current_player_index)
+    p = @players[player]
+    p.battlefield[card].tap_card
+  end
   # PHASES
   def turn
     @phase = :untap

@@ -11,10 +11,9 @@ class GameTest < MiniTest::Unit::TestCase
     @game.current_player_index = 0
     assert_equal 7, @game.current_player.hand.size
     
-    @game.turn
-    @game.untap
-    @game.draw
-    assert_equal 8, @game.hand.size
+    game_start()
+    
+    assert_equal 8, @game.current_player.hand.size
     assert_equal 52, @game.current_player.library.size
     
     @game.hand.each do |card|
@@ -36,16 +35,32 @@ class GameTest < MiniTest::Unit::TestCase
   end
   
   def test_card_play
-    @game.current_player_index = 0
-    @game.turn
-    @game.untap
-    @game.draw
+    game_start()
     
     land_index = @game.current_player.hand.index { |c| c.kind_of? Cards::Land }
-    @game.play land_index
+    @game.play_card land_index
     
     assert_equal 7, @game.hand.size
     assert_equal 1, @game.current_player.battlefield.size
     refute @game.current_player.hand.include?(@game.current_player.battlefield.first)
+  end
+  
+  def test_mana_pool
+    game_start()
+    
+    land_index = @game.current_player.hand.index { |c| c.kind_of? Cards::Land }
+    @game.play_card land_index
+    
+    @game.tap_card 0
+    assert_equal [ blue: 1 ], @game.current_player.mana_pool
+  end
+  
+  private
+  
+  def game_start
+    @game.current_player_index = 0
+    @game.turn
+    @game.untap
+    @game.draw
   end
 end
