@@ -33,7 +33,12 @@ class Game
   end
   def tap_card(card, player=current_player_index)
     p = @players[player]
-    p.battlefield[card].tap_card
+    c = p.battlefield[card]
+    #c.tap_card
+    
+    if c.kind_of? Cards::Land
+      p.mana_pool[c.color] += 1
+    end
   end
   # PHASES
   def turn

@@ -5,7 +5,7 @@ class Player
     @deck = []
     @library = []
     @battlefield = []
-    @mana_pool = []
+    @mana_pool = { black:0, blue: 0, green: 0, red: 0, white: 0 }
     56.times { @deck << Cards::Island.new }
     4.times { @deck << Cards::Snapcaster.new }
   end

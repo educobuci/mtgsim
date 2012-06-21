@@ -52,7 +52,7 @@ class GameTest < MiniTest::Unit::TestCase
     @game.play_card land_index
     
     @game.tap_card 0
-    assert_equal [ blue: 1 ], @game.current_player.mana_pool
+    assert_equal({ black:0, blue: 1, green: 0, red: 0, white: 0 }, @game.current_player.mana_pool)
   end
   
   private
