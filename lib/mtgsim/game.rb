@@ -1,37 +1,38 @@
 class Game
   attr_reader :phase
-  attr_accessor :current_player_index
+
+  def initialize(players)
+    @players = players
+  end
   
   def start
-    player1 = Player.new
-    player1.library = player1.deck.shuffle.dup
-    
-    player2 = Player.new
-    player2.library = player2.deck.shuffle.dup
-    
-    @players = [player1, player2]
+
+    @players[0].library = @players[0].deck.shuffle.dup
+    @players[1].library = @players[1].deck.shuffle.dup
     
     #each player sould draw seven cards
     self.draw_card 0, 7
     self.draw_card 1, 7
+
+    @current_player_index = 0
   end
   def current_player
-    @players[current_player_index]
+    @players[@current_player_index]
   end
-  def hand(player=current_player_index)
+  def hand(player=@current_player_index)
     @players[player].hand
   end
-  def draw_card(player=current_player_index, count=1)
+  def draw_card(player=@current_player_index, count=1)
     count.times do
       p = @players[player]
       p.hand << p.library.pop
     end
   end
-  def play_card(card, player=current_player_index)
+  def play_card(card, player=@current_player_index)
     p = @players[player]
     p.battlefield << p.hand.slice!(card)
   end
-  def tap_card(card, player=current_player_index)
+  def tap_card(card, player=@current_player_index)
     p = @players[player]
     c = p.battlefield[card]
     #c.tap_card
@@ -45,6 +46,7 @@ class Game
     @phase = :untap
   end
   def untap
+    self.current_player.battlefield.each {|c| c.untap_card}
     @phase = :upkeep
   end
   def draw
