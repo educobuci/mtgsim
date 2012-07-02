@@ -29,7 +29,14 @@ class Game
   end
   def play_card(card, player=current_player_index)
     p = @players[player]
+    
+    unless p.hand[card].kind_of? Cards::Land
+      return false 
+    end
+    
     p.battlefield << p.hand.slice!(card)
+    
+    true
   end
   def tap_card(card, player=current_player_index)
     p = @players[player]
@@ -39,6 +46,9 @@ class Game
     if c.kind_of? Cards::Land
       p.mana_pool[c.color] += 1
     end
+  end
+  def players(index)
+    @players[index]
   end
   # PHASES
   def turn

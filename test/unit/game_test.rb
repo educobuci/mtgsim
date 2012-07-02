@@ -52,7 +52,13 @@ class GameTest < MiniTest::Unit::TestCase
     @game.play_card land_index
     
     @game.tap_card 0
-    assert_equal({ black:0, blue: 1, green: 0, red: 0, white: 0 }, @game.current_player.mana_pool)
+    assert_equal({ black:0, blue: 1, colorless: 0, green: 0, red: 0, white: 0 }, @game.current_player.mana_pool)
+  end
+  
+  def test_mana_cost
+    game_start()
+    @game.players(0).hand = [Cards::Snapcaster.new]
+    refute @game.play_card(0)
   end
   
   private
