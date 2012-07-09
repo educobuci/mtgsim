@@ -70,7 +70,17 @@ class GameTest < MiniTest::Unit::TestCase
     assert_equal false, players[0].battlefield[0].is_tapped?
     assert_equal false, players[0].battlefield[1].is_tapped?
   end
-  
+
+  def test_game_next_phase
+    phase_manager_mock = MiniTest::Mock.new
+    phase_manager_mock.expect :next, nil
+
+    game = Game.new create_players, phase_manager_mock
+    game.next_phase
+
+    phase_manager_mock.verify
+  end
+
   private
 
   def create_players

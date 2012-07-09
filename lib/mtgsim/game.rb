@@ -1,8 +1,11 @@
 class Game
   attr_reader :phase
 
-  def initialize(players)
+  def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
+    
+    @phase_manager = phase_manager
+#    @phase_manager.add_observer self
   end
   
   def start
@@ -42,6 +45,11 @@ class Game
     end
   end
   # PHASES
+  
+  def next_phase
+    @phase_manager.next
+  end
+
   def turn
     @phase = :untap
   end
