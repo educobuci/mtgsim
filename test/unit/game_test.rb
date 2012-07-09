@@ -3,12 +3,11 @@ require "mtgsim"
 
 class GameTest < MiniTest::Unit::TestCase
   def setup
-    @game = Game.new
+    @game = Game.new create_players
     @game.start
   end
   
   def test_simple_game_start
-    @game.current_player_index = 0
     assert_equal 7, @game.current_player.hand.size
     
     game_start()
@@ -22,7 +21,6 @@ class GameTest < MiniTest::Unit::TestCase
   end
   
   def test_game_phases
-    @game.current_player_index = 0
 
     @game.turn
     assert_equal @game.phase, :untap
@@ -60,11 +58,42 @@ class GameTest < MiniTest::Unit::TestCase
     @game.players(0).hand = [Cards::Snapcaster.new]
     refute @game.play_card(0)
   end
-  
+
+  def test_game_untap_phase
+
+    players = create_players
+
+    players[0].battlefield << Cards::Island.new
+    players[0].battlefield << Cards::Snapcaster.new
+
+    players[0].battlefield.each { |c| c.tap_card }
+
+    game = Game.new players
+
+    game.start
+    game.untap
+
+    assert_equal false, players[0].battlefield[0].is_tapped?
+    assert_equal false, players[0].battlefield[1].is_tapped?
+  end
+
+  def test_game_next_phase
+    phase_manager_mock = MiniTest::Mock.new
+    phase_manager_mock.expect :next, nil
+
+    game = Game.new create_players, phase_manager_mock
+    game.next_phase
+
+    phase_manager_mock.verify
+  end
+
   private
+
+  def create_players
+    [Player.new, Player.new]
+  end
   
   def game_start
-    @game.current_player_index = 0
     @game.turn
     @game.untap
     @game.draw
