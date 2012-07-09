@@ -1,4 +1,7 @@
+require 'observer'
+
 class PhaseStateMachine
+  include Observable
 
   def initialize
     @phases = configure_phases
@@ -11,7 +14,10 @@ class PhaseStateMachine
 
   def next
     @current_phase = @phases[@current_phase]
-    #todo: call observer's method for :current_phase (dispatch event)
+    changed
+    notify_observers(:changed_phase, @current_phase)
+
+    @current_phase
   end
 
   private
