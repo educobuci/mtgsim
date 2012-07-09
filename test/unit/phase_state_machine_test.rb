@@ -27,28 +27,23 @@ class PhaseStateMachineTest < MiniTest::Unit::TestCase
 
   def test_phase_state_can_have_observers_to_be_called_on_phase_change
     phaseObserver = PhaseObserverFake.new
-    assert_equal false, phaseObserver.wasNotified
 
     @game_phase.add_observer phaseObserver
     @game_phase.next
 
-    assert_equal true, phaseObserver.wasNotified
+    assert_equal :upkeep, phaseObserver.phase
   end
 
   private
 
   class PhaseObserverFake
 
-    def initialize
-      @notified = false
-    end
-
-    def wasNotified
-      @notified
+    def phase
+      @phase
     end
 
     def update(status, phase)
-      @notified = true
+      @phase = phase
     end
   end
 
