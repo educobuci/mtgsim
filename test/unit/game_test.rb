@@ -14,14 +14,9 @@ class GameTest < MiniTest::Unit::TestCase
     
     assert_equal 8, @game.current_player.hand.size
     assert_equal 52, @game.current_player.library.size
-    
-    @game.hand.each do |card|
-      #puts card.name
-    end
   end
   
   def test_game_phases
-
     @game.turn
     assert_equal @game.phase, :untap
 
@@ -74,7 +69,6 @@ class GameTest < MiniTest::Unit::TestCase
   end
 
   def test_game_untap_phase
-
     players = create_players
 
     players[0].battlefield << Cards::Island.new
