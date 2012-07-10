@@ -65,6 +65,13 @@ class GameTest < MiniTest::Unit::TestCase
 
     assert @game.play_card(0)
   end
+  
+  def test_land_play
+    game_start()
+    @game.current_player.hand = [Cards::Island.new, Cards::Island.new]
+    assert @game.play_card(0)
+    refute @game.play_card(0)
+  end
 
   def test_game_untap_phase
 

@@ -3,6 +3,7 @@ class Game
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
+    @land_fall = false
     
     @phase_manager = phase_manager
 #    @phase_manager.add_observer self
@@ -34,12 +35,16 @@ class Game
   def play_card(card, player=@current_player_index)
     p = @players[player]
     
-    if (p.hand[card].kind_of? Cards::Land) || p.mana_pool.pay_cost(p.hand[card])
+    if p.hand[card].kind_of?(Cards::Land)
+      unless @land_fall
+        p.battlefield << p.hand.slice!(card)
+        @land_fall = true
+      end
+    elsif p.mana_pool.pay_cost(p.hand[card])
       p.battlefield << p.hand.slice!(card)
-      return true
+    else
+      return false
     end
-    
-    return false
   end
   def tap_card(card, player=@current_player_index)
     p = @players[player]
@@ -61,6 +66,7 @@ class Game
 
   def turn
     @phase = :untap
+    @land_fall = false
   end
   def untap
     self.current_player.battlefield.each {|c| c.untap_card}
