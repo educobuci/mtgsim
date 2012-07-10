@@ -8,13 +8,32 @@ class ManaPool
   def add(color, amount=1)
     @values[color] += amount
   end
-  def eval_cost(card)
+  def pay_cost(card)
     card.cost.each_pair do |key, value|
       if @values[key] < value && key != :colorless
         return false
       end
     end
-    total >= card_total(card)
+    if total >= card_total(card)
+      card.cost.each_pair do |key, value|
+        if key != :colorless
+          @values[key] -= value
+        end
+      end
+      paid = 0
+      if card.cost[:colorless]
+        @values.each_pair do |key, value|
+          if paid < card.cost[:colorless] && value > 0
+            to_be_paid = [card.cost[:colorless], value].min
+            @values[key] -= to_be_paid
+            paid += to_be_paid
+          end
+        end        
+      end
+      return true
+    else
+      return false
+    end
   end
   def card_total(card)
     total = 0

@@ -4,9 +4,10 @@ require "mtgsim"
 class ManaPoolTest < MiniTest::Unit::TestCase
   def setup
     @pool = ManaPool.new
+    @default_pool = { black: 0, blue: 0, colorless: 0, green: 0, red: 0, white: 0 }
   end
   def test_default_values
-    assert_equal({ black: 0, blue: 0, colorless: 0, green: 0, red: 0, white: 0 }, @pool.to_hash)
+    assert_equal @default_pool, @pool.to_hash
   end
   def test_add
     @pool.add(:blue, 1)
@@ -14,23 +15,27 @@ class ManaPoolTest < MiniTest::Unit::TestCase
     @pool.add(:blue, 1)
     assert_equal 2, @pool.to_hash[:blue]
   end
-  def test_simple_cost_eval
+  def test_simple_cost_payment
     card = Cards::DelverofSecrets.new
-    refute @pool.eval_cost(card)
+    refute @pool.pay_cost(card)
     @pool.add :blue
-    assert @pool.eval_cost(card)
+    assert @pool.pay_cost(card)
+    assert_equal @default_pool, @pool.to_hash
   end
-  def test_colorless_cost_eval
+  def test_colorless_cost_payment
     card = Cards::Snapcaster.new
     @pool.add :blue, 2
-    assert @pool.eval_cost(card)
+    assert @pool.pay_cost(card)
+    assert_equal @default_pool, @pool.to_hash
   end
-  def test_multcolor_cost_eval
+  def test_multcolor_cost_payment
     card = Cards::GeistofSaintTraft.new
     @pool.add :blue, 2
-    refute @pool.eval_cost(card)
+    refute @pool.pay_cost(card)
     
     @pool.add :white
-    assert @pool.eval_cost(card)
+    assert @pool.pay_cost(card)
+    
+    assert_equal @default_pool, @pool.to_hash
   end
 end
