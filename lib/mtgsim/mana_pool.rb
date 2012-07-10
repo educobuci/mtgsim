@@ -8,6 +8,9 @@ class ManaPool
   def add(color, amount=1)
     @values[color] += amount
   end
+  def [](index)
+    @values[index]
+  end
   def pay_cost(card)
     card.cost.each_pair do |key, value|
       if @values[key] < value && key != :colorless

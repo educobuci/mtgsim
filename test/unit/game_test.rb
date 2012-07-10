@@ -43,20 +43,27 @@ class GameTest < MiniTest::Unit::TestCase
     refute @game.current_player.hand.include?(@game.current_player.battlefield.first)
   end
   
-  def test_mana_pool
+  def test_tap_land_to_add_a_mana_to_pool
     game_start()
     
     land_index = @game.current_player.hand.index { |c| c.kind_of? Cards::Land }
     @game.play_card land_index
     
     @game.tap_card 0
-    assert_equal({ black:0, blue: 1, colorless: 0, green: 0, red: 0, white: 0 }, @game.current_player.mana_pool)
+    assert_equal 1, @game.current_player.mana_pool[:blue]
   end
   
   def test_mana_cost
     game_start()
-    @game.players(0).hand = [Cards::Snapcaster.new]
+    @game.current_player.hand = [Cards::Snapcaster.new]
     refute @game.play_card(0)
+    
+    2.times { @game.current_player.battlefield << Cards::Island.new }
+    
+    @game.tap_card 0
+    @game.tap_card 1
+
+    assert @game.play_card(0)
   end
 
   def test_game_untap_phase
@@ -73,8 +80,8 @@ class GameTest < MiniTest::Unit::TestCase
     game.start
     game.untap
 
-    assert_equal false, players[0].battlefield[0].is_tapped?
-    assert_equal false, players[0].battlefield[1].is_tapped?
+    refute players[0].battlefield[0].is_tapped?
+    refute players[0].battlefield[1].is_tapped?
   end
 
   def test_game_next_phase
