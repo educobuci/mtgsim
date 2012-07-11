@@ -1,9 +1,11 @@
 module Cards
   class Card
-    attr_reader :name
-    def initialize(name)
+    attr_reader :name, :set, :id
+    def initialize(name, set, id)
       @name = name
       @tapped = false
+      @set = set
+      @id = id
     end
     def tap_card
       @tapped = true
