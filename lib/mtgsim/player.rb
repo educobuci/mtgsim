@@ -7,6 +7,6 @@ class Player
     @battlefield = []
     @mana_pool = ManaPool.new
     56.times { @deck << Cards::Island.new }
-    4.times { @deck << Cards::Snapcaster.new }
+    4.times { @deck << Cards::SnapcasterMage.new }
   end
 end

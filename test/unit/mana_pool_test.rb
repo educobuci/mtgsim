@@ -23,7 +23,7 @@ class ManaPoolTest < MiniTest::Unit::TestCase
     assert_equal @default_pool, @pool.to_hash
   end
   def test_colorless_cost_payment
-    card = Cards::Snapcaster.new
+    card = Cards::SnapcasterMage.new
     @pool.add :blue, 2
     assert @pool.pay_cost(card)
     assert_equal @default_pool, @pool.to_hash

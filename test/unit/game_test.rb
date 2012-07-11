@@ -50,7 +50,7 @@ class GameTest < MiniTest::Unit::TestCase
   
   def test_mana_cost
     game_start()
-    @game.current_player.hand = [Cards::Snapcaster.new]
+    @game.current_player.hand = [Cards::SnapcasterMage.new]
     refute @game.play_card(0)
     
     2.times { @game.current_player.battlefield << Cards::Island.new }
@@ -72,7 +72,7 @@ class GameTest < MiniTest::Unit::TestCase
     players = create_players
 
     players[0].battlefield << Cards::Island.new
-    players[0].battlefield << Cards::Snapcaster.new
+    players[0].battlefield << Cards::SnapcasterMage.new
 
     players[0].battlefield.each { |c| c.tap_card }
 

@@ -6,6 +6,7 @@ module Cards
       self.power = 2
       self.toughness = 2
       self.cost = { blue: 1, colorless: 1, white: 1 }
+      self.types = [:spirit, :cleric]
     end
   end
 end
