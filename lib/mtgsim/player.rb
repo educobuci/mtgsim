@@ -1,5 +1,6 @@
 class Player
-  attr_accessor :hand, :deck, :library, :graveyard, :battlefield, :mana_pool
+  attr_accessor :hand, :deck, :library, :graveyard, :battlefield, :mana_pool,
+    :id
   def initialize
     @hand = []
     @deck = []

@@ -6,12 +6,15 @@ class Game
     @land_fall = false
     
     @phase_manager = phase_manager
-#    @phase_manager.add_observer self
+    @phase_manager.add_observer self
   end
   
   def start
 
+    @players[0].id = :player1
     @players[0].library = @players[0].deck.shuffle.dup
+
+    @players[1].id = :player2
     @players[1].library = @players[1].deck.shuffle.dup
     
     #each player sould draw seven cards
@@ -62,6 +65,16 @@ class Game
   
   def next_phase
     @phase_manager.next
+  end
+
+  def update(status, phase)
+    if phase == :pass_turn
+      if @current_player_index == 1
+        @current_player_index = 0
+      else
+        @current_player_index = 1
+      end
+    end
   end
 
   def turn
