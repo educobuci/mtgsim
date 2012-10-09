@@ -1,6 +1,8 @@
 module Cards
   class Card
     attr_reader :name, :set, :id
+    attr_accessor :image
+    
     def initialize(name, set, id)
       @name = name
       @tapped = false

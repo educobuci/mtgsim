@@ -10,7 +10,6 @@ class Game
   end
   
   def start
-
     @players[0].id = :player1
     @players[0].library = @players[0].deck.shuffle.dup
 

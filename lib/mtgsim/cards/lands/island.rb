@@ -4,6 +4,7 @@ module Cards
     def initialize
       super "Island", :none, 0
       self.color = :blue
+      self.image = "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=249723&type=card"
     end
   end
 end

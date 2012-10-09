@@ -7,6 +7,7 @@ module Cards
       self.toughness = 1
       self.cost = { blue: 1, colorless: 1 }
       self.types = [:human, :wizard]
+      self.image = "http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=227676&type=card"
     end
   end
 end
