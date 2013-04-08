@@ -16,6 +16,15 @@ class GameTest < MiniTest::Unit::TestCase
     assert_equal 52, @game.current_player.library.size
   end
   
+  # def test_start_gamer
+  #   if result[0] > result[1]
+  #     assert_equal 0, @game.current_player_index
+  #   end
+  #   if result[1] > result[0]
+  #     assert_equal 0, @game.current_player_index
+  #   end
+  # end
+  
   def test_game_phases
     @game.turn
     assert_equal @game.phase, :untap
