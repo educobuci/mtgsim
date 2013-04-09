@@ -87,4 +87,13 @@ class GameStatesTest < MiniTest::Unit::TestCase
     @game.keep(1)
     refute_equal :keep, @game.state
   end
+  
+  def test_mulligan
+    @game.roll_dices
+    @game.start(@game.die_winner, @game.die_winner)
+    @game.draw_hands
+    @game.mulligan(0)
+    assert_equal 6, @game.players(0).hand
+  end
+  
 end
