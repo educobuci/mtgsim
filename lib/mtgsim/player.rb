@@ -1,5 +1,5 @@
 class Player
-  attr_accessor :keep, :hand, :deck, :library, :graveyard, :battlefield, :mana_pool,
+  attr_accessor :mulligan, :keep, :hand, :deck, :library, :graveyard, :battlefield, :mana_pool,
     :id
   def initialize
     @hand = []
@@ -7,6 +7,7 @@ class Player
     @library = []
     @battlefield = []
     @mana_pool = ManaPool.new
+    @mulligan = 0
     48.times { @deck << Cards::Island.new }
     4.times { @deck << Cards::SnapcasterMage.new }
     4.times { @deck << Cards::DelverofSecrets.new }

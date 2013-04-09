@@ -42,6 +42,18 @@ class Game
     end
   end
   
+  def mulligan(player_index)
+    check_state :hand do
+      player = players(player_index)
+      unless player.keep
+        player.mulligan += 1
+        player.library = player.library.shuffle
+        player.hand = []
+        self.draw_card player_index, 7 - player.mulligan
+      end
+    end
+  end
+  
   def current_player
     @players[@current_player_index]
   end

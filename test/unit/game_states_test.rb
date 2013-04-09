@@ -93,7 +93,38 @@ class GameStatesTest < MiniTest::Unit::TestCase
     @game.start(@game.die_winner, @game.die_winner)
     @game.draw_hands
     @game.mulligan(0)
-    assert_equal 6, @game.players(0).hand
+    assert_equal 6, @game.players(0).hand.size
+  end
+  
+  def test_mulligan_limit
+    @game.roll_dices
+    @game.start(@game.die_winner, @game.die_winner)
+    @game.draw_hands
+    
+    7.times do
+      @game.mulligan(0)
+    end
+    
+    assert_equal 0, @game.players(0).hand.size
+  end
+  
+  def test_mulligan_only_if_not_keep
+    @game.roll_dices
+    @game.start(@game.die_winner, @game.die_winner)
+    @game.draw_hands
+    
+    @game.keep(0)
+    
+    @game.mulligan(0)
+    assert_equal 7, @game.players(0).hand.size
+  end
+  
+  def test_mulligan_only_on_hand
+    @game.roll_dices
+    @game.start(@game.die_winner, @game.die_winner)
+    
+    @game.mulligan(0)
+    assert_equal 0, @game.players(0).hand.size
   end
   
 end
