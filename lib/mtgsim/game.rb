@@ -10,10 +10,10 @@ class Game
     self.state = :initialized
   end
   
-  def start(player_index, start_index)
+  def start_player(player_index, start_index)
     check_state :dices do
       if @die_winner == player_index
-        self.state = :start
+        self.state = :start_player
         @current_player_index = start_index
       end
     end

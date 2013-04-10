@@ -23,8 +23,8 @@ class GameStatesTest < MiniTest::Unit::TestCase
   def test_die_roll_winner_starting
     result = @game.roll_dices
     
-    @game.start(@game.die_winner, @game.die_winner)
-    assert_equal :start, @game.state
+    @game.start_player(@game.die_winner, @game.die_winner)
+    assert_equal :start_player, @game.state
 
     assert_equal @game.die_winner, @game.current_player_index
   end
@@ -34,8 +34,8 @@ class GameStatesTest < MiniTest::Unit::TestCase
     winner = @game.die_winner
     loser = @game.die_winner == 0 ? 1 : 0
     
-    @game.start(winner, loser)
-    assert_equal :start, @game.state
+    @game.start_player(winner, loser)
+    assert_equal :start_player, @game.state
 
     assert_equal loser, @game.current_player_index
   end
@@ -45,8 +45,8 @@ class GameStatesTest < MiniTest::Unit::TestCase
     winner = @game.die_winner
     loser = @game.die_winner == 0 ? 1 : 0
     
-    @game.start(loser, loser)
-    refute_equal :start, @game.state
+    @game.start_player(loser, loser)
+    refute_equal :start_player, @game.state
 
     assert_nil @game.current_player_index
   end  
@@ -55,15 +55,15 @@ class GameStatesTest < MiniTest::Unit::TestCase
     @game.roll_dices
     loser = @game.die_winner == 0 ? 1 : 0
     
-    @game.start(@game.die_winner, loser)    
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, loser)    
+    @game.start_player(@game.die_winner, @game.die_winner)
     
     refute_equal @game.die_winner, @game.current_player_index
   end
   
   def test_hand
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     @game.draw_hands
     assert_equal 7, @game.players(0).hand.size
     assert_equal 7, @game.players(1).hand.size
@@ -72,7 +72,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
   
   def test_keep
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     @game.draw_hands
     
     @game.keep(0)
@@ -90,7 +90,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
   
   def test_mulligan
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     @game.draw_hands
     @game.mulligan(0)
     assert_equal 6, @game.players(0).hand.size
@@ -98,7 +98,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
   
   def test_mulligan_limit
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     @game.draw_hands
     
     7.times do
@@ -110,7 +110,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
   
   def test_mulligan_only_if_not_keep
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     @game.draw_hands
     
     @game.keep(0)
@@ -121,7 +121,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
   
   def test_mulligan_only_on_hand
     @game.roll_dices
-    @game.start(@game.die_winner, @game.die_winner)
+    @game.start_player(@game.die_winner, @game.die_winner)
     
     @game.mulligan(0)
     assert_equal 0, @game.players(0).hand.size
