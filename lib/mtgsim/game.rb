@@ -1,5 +1,5 @@
 class Game
-  attr_reader :phase, :current_player_index, :die_winner
+  attr_reader :phase, :current_player_index, :die_winner, :priority_player
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
@@ -123,6 +123,7 @@ class Game
   end
 
   def update(status, phase)
+    @priority_player = @current_player_index
     if phase == :pass_turn
       if @current_player_index == 1
         @current_player_index = 0
@@ -146,7 +147,20 @@ class Game
     
     dices_result
   end
-
+  
+  def pass(player)
+    check_state :started do
+      if @priority_player == player
+       @priority_player = player == 0 ? 1 : 0
+       if @priority_player == @current_player_index
+         self.next_phase()
+       end
+       return true
+      end
+    end
+    return false
+  end
+  
   def turn
     @phase = :untap
     @land_fall = false

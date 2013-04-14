@@ -19,6 +19,14 @@ class PhaseStateMachine
 
     @current_phase
   end
+  
+  def jump_to(phase)
+    @current_phase = phase
+    changed
+    notify_observers(:changed_phase, @current_phase)
+
+    @current_phase
+  end
 
   private
   def configure_phases
