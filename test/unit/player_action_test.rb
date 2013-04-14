@@ -97,4 +97,26 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert_equal :begin_combat, @game.current_phase
   end
   
+  def test_priority_pass_changes_to_next_phase
+    prepare_game
+    player = @game.current_player_index
+    opponent = @game.current_player_index == 0 ? 1 : 0
+    
+    @game.pass(player)
+    @game.pass(opponent)
+        
+    assert_equal :begin_combat, @game.current_phase
+  end
+  
+  def test_priority_pass_until_next_turn
+    prepare_game
+    player = @game.current_player_index
+    opponent = @game.current_player_index == 0 ? 1 : 0
+    
+    @game.pass(player)
+    @game.pass(opponent)
+        
+    assert_equal :begin_combat, @game.current_phase
+  end
+  
 end

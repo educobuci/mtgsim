@@ -123,15 +123,10 @@ class Game
   end
 
   def update(status, phase)
-    @priority_player = @current_player_index
-    if phase == :pass_turn
-      if @current_player_index == 1
-        @current_player_index = 0
-      else
-        @current_player_index = 1
-      end
-      @land_fall = false
+    if phase == :upkeep
+      
     end
+    @priority_player = @current_player_index
   end
   
   def roll_dices
@@ -151,18 +146,22 @@ class Game
   def pass(player)
     check_state :started do
       if @priority_player == player
-       @priority_player = player == 0 ? 1 : 0
-       if @priority_player == @current_player_index
-         self.next_phase()
-       end
-       return true
+        @priority_player = player == 0 ? 1 : 0
+        if @priority_player == @current_player_index
+          self.next_phase()
+        end
+        return true
       end
     end
     return false
   end
   
   def turn
-    @phase = :untap
+    if @current_player_index == 1
+      @current_player_index = 0
+    else
+      @current_player_index = 1
+    end
     @land_fall = false
   end
   
