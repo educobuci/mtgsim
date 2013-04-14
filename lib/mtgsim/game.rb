@@ -23,7 +23,7 @@ class Game
     check_state :keep do
       self.state = :started
       3.times { self.next_phase }
-      self.draw_card()
+      self.draw_card(@current_player_index)
     end
   end
   
@@ -66,39 +66,47 @@ class Game
     @players[@current_player_index]
   end
   
-  def hand(player=@current_player_index)
+  def hand(player)
     @players[player].hand
   end
   
-  def draw_card(player=@current_player_index, count=1)
+  def draw_card(player, count=1)
     count.times do
       p = @players[player]
       p.hand << p.library.pop
     end
   end
   
-  def play_card(card, player=@current_player_index)
-    p = @players[player]
-    
-    if p.hand[card].kind_of?(Cards::Land)
-      unless @land_fall
-        p.battlefield << p.hand.slice!(card)
-        @land_fall = true
+  def play_card(player, card)
+    check_state :started do
+      if player == @current_player_index
+        p = @players[player]
+        
+        if p.hand[card].kind_of?(Cards::Land)
+          unless @land_fall
+            p.board << p.hand.slice!(card)
+            @land_fall = true
+            return true
+          end
+        elsif p.mana_pool.pay_cost(p.hand[card])
+          p.board << p.hand.slice!(card)
+          return true
+        end        
       end
-    elsif p.mana_pool.pay_cost(p.hand[card])
-      p.battlefield << p.hand.slice!(card)
-    else
-      return false
     end
+    
+    return false
   end
   
-  def tap_card(card, player=@current_player_index)
-    p = @players[player]
-    c = p.battlefield[card]
-    c.tap_card
+  def tap_card(player, card)
+    check_state :started do
+      p = @players[player]
+      c = p.board[card]
+      c.tap_card
     
-    if c.kind_of? Cards::Land
-      p.mana_pool.add c.color
+      if c.kind_of? Cards::Land
+        p.mana_pool.add c.color
+      end
     end
   end
   
@@ -148,18 +156,6 @@ class Game
     self.current_player.battlefield.each {|c| c.untap_card}
     @phase = :upkeep
   end
-  
-  def draw
-    self.draw_card
-    @phase = :main
-  end
-  
-  # def ready(index)
-  #     @players[index].ready = true
-  #     if @players.count {|p| p.ready == true } == 2
-  #       self.state = :ready
-  #     end
-  #   end
   
   def state
     @state
