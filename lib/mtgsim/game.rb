@@ -19,6 +19,14 @@ class Game
     end
   end
   
+  def start
+    check_state :keep do
+      self.state = :started
+      3.times { self.next_phase }
+      self.draw_card()
+    end
+  end
+  
   def check_state(value, &block)
     if self.state == value
       yield block
