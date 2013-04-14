@@ -154,12 +154,12 @@ class Game
     @phase = :main
   end
   
-  def ready(index)
-    @players[index].ready = true
-    if @players.count {|p| p.ready == true } == 2
-      self.state = :ready
-    end
-  end
+  # def ready(index)
+  #     @players[index].ready = true
+  #     if @players.count {|p| p.ready == true } == 2
+  #       self.state = :ready
+  #     end
+  #   end
   
   def state
     @state
@@ -167,5 +167,5 @@ class Game
   
   def state=(value)
     @state = value
-  end  
+  end
 end
