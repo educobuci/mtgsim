@@ -1,5 +1,5 @@
 class Game
-  attr_reader :phase, :current_player_index, :die_winner, :priority_player
+  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
@@ -83,14 +83,18 @@ class Game
         p = @players[player]
         
         if p.hand[card].kind_of?(Cards::Land)
-          unless @land_fall
-            p.board << p.hand.slice!(card)
-            @land_fall = true
-            return true
+          check_phase [:first_main, :second_main] do
+            unless @land_fall
+              p.board << p.hand.slice!(card)
+              @land_fall = true
+              return true
+            end
           end
         elsif p.mana_pool.pay_cost(p.hand[card])
-          p.board << p.hand.slice!(card)
-          return true
+          check_phase [:first_main, :second_main] do
+            p.board << p.hand.slice!(card)
+            return true
+          end
         end        
       end
     end
@@ -144,6 +148,18 @@ class Game
       end
     end
     return false
+  end
+  
+  def check_phase(phases, &block)
+    if phases.kind_of? Array
+      if phases.include?(self.current_phase)
+        yield block
+      end
+    else
+      if phases == self.current_phase
+        yield block
+      end
+    end
   end
 
   def update(status, phase)
