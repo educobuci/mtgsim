@@ -48,16 +48,4 @@ class GameTest# < MiniTest::Unit::TestCase
     12.times { @game.next_phase }
     assert_equal :player1, @game.current_player.id
   end
-
-  private
-
-  def create_players
-    [Player.new, Player.new]
-  end
-  
-  def game_start
-    @game.turn
-    @game.untap
-    @game.draw
-  end
 end

@@ -21,7 +21,7 @@ class PhaseStateMachineTest < MiniTest::Unit::TestCase
   end
 
   def test_current_phase_is_untap_after_pass_turn
-    12.times { @game_phase.next }
+    11.times { @game_phase.next }
     assert_equal :untap, @game_phase.current
   end
 

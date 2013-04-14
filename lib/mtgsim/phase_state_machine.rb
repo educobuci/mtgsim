@@ -40,8 +40,7 @@ class PhaseStateMachine
       :damage => :end_combat,
       :end_combat => :second_main,
       :second_main => :end,
-      :end => :pass_turn,
-      :pass_turn => :untap }
+      :end => :untap }
   end
 
 end

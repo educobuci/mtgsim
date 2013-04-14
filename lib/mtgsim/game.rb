@@ -121,23 +121,13 @@ class Game
   def current_phase
     @phase_manager.current
   end
-
-  def update(status, phase)
-    if phase == :upkeep
-      
-    end
-    @priority_player = @current_player_index
-  end
   
   def roll_dices
     self.state = :dices
-    
     dices_result = []
     
     @die_winner = rand(0..1)
-        
     dices_result[@die_winner] = rand(2..6)
-    
     dices_result[(@die_winner == 0 ? 1 : 0)] = rand(2..dices_result[@die_winner]) - 1
     
     dices_result
@@ -148,12 +138,21 @@ class Game
       if @priority_player == player
         @priority_player = player == 0 ? 1 : 0
         if @priority_player == @current_player_index
-          self.next_phase()
+          self.next_phase
         end
         return true
       end
     end
     return false
+  end
+
+  def update(status, phase)
+    @priority_player = @current_player_index
+    if phase == :untap
+      self.turn
+      self.untap
+      self.next_phase
+    end
   end
   
   def turn
@@ -166,8 +165,7 @@ class Game
   end
   
   def untap
-    self.current_player.battlefield.each {|c| c.untap_card}
-    @phase = :upkeep
+    self.current_player.board.each { |c| c.untap_card }
   end
   
   def state
