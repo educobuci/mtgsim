@@ -93,6 +93,7 @@ class Game
         elsif p.mana_pool.pay_cost(p.hand[card])
           check_phase [:first_main, :second_main] do
             p.board << p.hand.slice!(card)
+            @tapped_to_cast = []
             return true
           end
         end        
