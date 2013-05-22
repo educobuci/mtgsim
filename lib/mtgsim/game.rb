@@ -8,6 +8,7 @@ class Game
     @phase_manager = phase_manager
     @phase_manager.add_observer self
     self.state = :initialized
+    @tapped_to_cast = []
   end
   
   def start_player(player_index, start_index)
@@ -107,8 +108,8 @@ class Game
       c = p.board[card]
       unless c.is_tapped?
         c.tap_card
-    
         if c.kind_of? Cards::Land
+          @tapped_to_cast << c
           p.mana_pool.add c.color
         end
       end
@@ -194,5 +195,12 @@ class Game
   
   def state=(value)
     @state = value
+  end
+  
+  def cancel_cast(player)
+    @tapped_to_cast.each do |c|
+      c.untap_card
+      @players[player].mana_pool.remove c.color
+    end
   end
 end

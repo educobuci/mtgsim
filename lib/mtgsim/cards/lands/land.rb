@@ -1,5 +1,5 @@
 module Cards
   module Land
-    attr_accessor :color
+    attr_accessor :color, :produced
   end
 end

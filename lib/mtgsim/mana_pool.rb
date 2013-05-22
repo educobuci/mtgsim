@@ -8,6 +8,9 @@ class ManaPool
   def add(color, amount=1)
     @values[color] += amount
   end
+  def remove(color, amount=1)
+    @values[color] -= amount
+  end
   def [](index)
     @values[index]
   end

@@ -71,6 +71,20 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert_equal 1, @game.current_player.mana_pool[:blue]
   end
   
+  def test_cast_cancelation
+    prepare_game
+    @game.current_player.hand[0] = Cards::Island.new
+    player = @game.current_player_index
+    
+    assert @game.play_card(player, 0)
+    
+    @game.tap_card(player, 0)
+    @game.cancel_cast(player)
+    
+    assert_equal 0, @game.current_player.mana_pool[:blue]
+    refute @game.current_player.hand[0].is_tapped?
+  end
+  
   def test_mana_cost
     prepare_game
     @game.current_player.hand = [Cards::SnapcasterMage.new]
