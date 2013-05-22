@@ -22,8 +22,7 @@ class Game
   def start
     check_state :keep do
       self.state = :started
-      3.times { self.next_phase }
-      self.draw_card(@current_player_index)
+      self.phase_manager.jump_to :first_main
     end
   end
   
@@ -106,10 +105,12 @@ class Game
     check_state :started do
       p = @players[player]
       c = p.board[card]
-      c.tap_card
+      unless c.is_tapped?
+        c.tap_card
     
-      if c.kind_of? Cards::Land
-        p.mana_pool.add c.color
+        if c.kind_of? Cards::Land
+          p.mana_pool.add c.color
+        end
       end
     end
   end
@@ -167,6 +168,9 @@ class Game
     if phase == :untap
       self.turn
       self.untap
+      self.next_phase
+    elsif phase == :draw
+      self.draw_card @current_player_index
       self.next_phase
     end
   end

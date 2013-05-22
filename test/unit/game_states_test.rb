@@ -138,7 +138,7 @@ class GameStatesTest < MiniTest::Unit::TestCase
     
     assert_equal :started, @game.state
     assert_equal @game.die_winner, @game.current_player_index
-    assert_equal 8, @game.current_player.hand.size
+    assert_equal 7, @game.current_player.hand.size
     assert_equal :first_main, @game.current_phase
   end
 end

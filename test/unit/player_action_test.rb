@@ -30,7 +30,7 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     
     assert @game.play_card(player, 0)
     
-    assert_equal 7, @game.current_player.hand.size
+    assert_equal 6, @game.current_player.hand.size
     assert_equal 1, @game.current_player.board.size
     refute @game.current_player.hand.include?(@game.current_player.board.first)
   end
@@ -55,6 +55,19 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert @game.play_card(player, 0)
     
     @game.tap_card(player, 0)
+    assert_equal 1, @game.current_player.mana_pool[:blue]
+  end
+  
+  def test_cant_tap_a_tapped_card
+    prepare_game
+    @game.current_player.hand[0] = Cards::Island.new
+    player = @game.current_player_index
+    
+    assert @game.play_card(player, 0)
+    
+    @game.tap_card(player, 0)
+    @game.tap_card(player, 0)
+    
     assert_equal 1, @game.current_player.mana_pool[:blue]
   end
   
@@ -95,5 +108,6 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     @game.pass(opponent)
         
     assert_equal :begin_combat, @game.current_phase
-  end  
+  end
+  
 end
