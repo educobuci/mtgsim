@@ -140,4 +140,25 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert_equal :begin_combat, @game.current_phase
   end
   
+  def test_creature_etb_sickness
+    prepare_game
+    
+    @game.current_player.hand = [Cards::DelverofSecrets.new]
+    @game.current_player.board << Cards::Island.new
+
+    @game.tap_card @game.current_player_index, 0
+    @game.play_card(@game.current_player_index, 0)
+    
+    assert @game.current_player.board[1].sickness    
+
+    @game.phase_manager.jump_to :end
+    @game.pass(0)
+    @game.pass(1)
+    @game.phase_manager.jump_to :end
+    @game.pass(1)
+    @game.pass(0)
+    
+    refute @game.current_player.board[1].sickness
+  end
+  
 end

@@ -78,26 +78,28 @@ class Game
     end
   end
   
-  def play_card(player, card)
+  def play_card(player, card_index)
     check_state :started do
       if player == @current_player_index
         p = @players[player]
         
-        if p.hand[card].kind_of?(Cards::Land)
+        if p.hand[card_index].kind_of?(Cards::Land)
           check_phase [:first_main, :second_main] do
             unless @land_fall
-              p.board << p.hand.slice!(card)
+              p.board << p.hand.slice!(card_index)
               @land_fall = true
               return true
             end
           end
-        elsif p.mana_pool.pay_cost(p.hand[card])
+        elsif p.mana_pool.pay_cost(p.hand[card_index])
           check_phase [:first_main, :second_main] do
-            p.board << p.hand.slice!(card)
+            card = p.hand.slice!(card_index)
+            card.sickness = true if card.kind_of?(Cards::Creature)
+            p.board << card
             @tapped_to_cast = []
             return true
           end
-        end        
+        end
       end
     end
     
@@ -116,6 +118,10 @@ class Game
         end
       end
     end
+  end
+  
+  def attack(player, cards)
+    @attackers = cards
   end
   
   def players(index)
@@ -190,7 +196,10 @@ class Game
   end
   
   def untap
-    self.current_player.board.each { |c| c.untap_card }
+    self.current_player.board.each do |c|
+      c.untap_card
+      c.sickness = false if c.kind_of? Cards::Creature
+    end
   end
   
   def state

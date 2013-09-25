@@ -1,5 +1,5 @@
 module Cards
   module Creature
-    attr_accessor :power, :toughness, :cost
+    attr_accessor :power, :toughness, :cost, :sickness
   end
 end
