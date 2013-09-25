@@ -1,13 +1,15 @@
 module Cards
   class Card
-    attr_reader :name, :set, :id
+    attr_reader :name, :set, :id, :types, :subtypes
     attr_accessor :image
     
-    def initialize(name, set, id)
+    def initialize(name, set, id, types, subtypes)
       @name = name
       @tapped = false
       @set = set
       @id = id
+      @types = types
+      @subtypes = subtypes
     end
     def tap_card
       @tapped = true

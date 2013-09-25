@@ -1,5 +1,5 @@
 class Game
-  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager
+  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
@@ -9,6 +9,7 @@ class Game
     @phase_manager.add_observer self
     self.state = :initialized
     @tapped_to_cast = []
+    @attackers = []
   end
   
   def start_player(player_index, start_index)
@@ -174,6 +175,8 @@ class Game
     elsif phase == :draw
       self.draw_card @current_player_index
       self.next_phase
+    elsif phase == :blockers
+      self.phase_manager.jump_to :second_main
     end
   end
   

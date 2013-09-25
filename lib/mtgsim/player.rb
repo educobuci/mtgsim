@@ -8,9 +8,9 @@ class Player
     @board = []
     @mana_pool = ManaPool.new
     @mulligan = 0
-    36.times { @deck << Cards::Island.new }
-    4.times { @deck << Cards::GlacialFortress.new }
-    4.times { @deck << Cards::HallowedFountain.new }
+    24.times { @deck << Cards::Island.new }
+    20.times { @deck << Cards::Plains.new }
+    #4.times { @deck << Cards::HallowedFountain.new }
     
     4.times { @deck << Cards::SnapcasterMage.new }
     4.times { @deck << Cards::DelverofSecrets.new }
