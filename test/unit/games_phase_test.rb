@@ -34,10 +34,11 @@ class GamePhaseTest < MiniTest::Unit::TestCase
     
     @game.players(@opponent).board.each { |c| c.tap_card }
   
-    8.times do
-      @game.pass(@player)
-      @game.pass(@opponent)
-    end
+    @game.phase_manager.jump_to :end
+    
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
       
     refute @game.current_player.board[0].is_tapped?
     refute @game.current_player.board[1].is_tapped?
