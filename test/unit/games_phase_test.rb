@@ -19,10 +19,10 @@ class GamePhaseTest < MiniTest::Unit::TestCase
   end
 
   def test_priority_pass_until_next_turn  
-    8.times do
-      @game.pass(@player)
-      @game.pass(@opponent)
-    end
+    @game.phase_manager.jump_to :end
+    
+    @game.pass(@player)
+    @game.pass(@opponent)
       
     assert_equal :upkeep, @game.current_phase
     assert_equal @opponent, @game.current_player_index
@@ -62,10 +62,7 @@ class GamePhaseTest < MiniTest::Unit::TestCase
   def test_player_can_play_land_in_second_main_phase    
     @game.current_player.hand = [Cards::Island.new, Cards::Island.new]
     
-    6.times do
-      @game.pass(@player)
-      @game.pass(@opponent)
-    end
+    @game.phase_manager.jump_to :second_main
     
     assert @game.play_card(@player, 0)
   end
