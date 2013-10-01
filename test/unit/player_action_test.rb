@@ -152,11 +152,11 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert @game.current_player.board[1].sickness    
 
     @game.phase_manager.jump_to :end
-    @game.pass(0)
-    @game.pass(1)
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
     @game.phase_manager.jump_to :end
-    @game.pass(1)
-    @game.pass(0)
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
     
     refute @game.current_player.board[1].sickness
   end

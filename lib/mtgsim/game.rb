@@ -67,6 +67,14 @@ class Game
     @players[@current_player_index]
   end
   
+  def opponent_player
+    @players[opponent_index]
+  end
+  
+  def opponent_index
+    @current_player_index == 0 ? 1 : 0
+  end
+  
   def hand(player)
     @players[player].hand
   end
@@ -121,7 +129,10 @@ class Game
   end
   
   def attack(player, cards)
-    @attackers = cards
+    @attackers = cards.select {|c| !c.sickness }
+    if @attackers.length > 0 
+      
+    end
   end
   
   def players(index)
