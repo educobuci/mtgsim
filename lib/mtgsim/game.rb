@@ -129,10 +129,13 @@ class Game
   end
   
   def attack(player, cards)
-    @attackers = cards.select {|c| !c.sickness }
-    if @attackers.length > 0 
-      
-    end
+    # p = @players[player]
+    # 
+    # @attackers = cards.select { |c| !c.sickness }
+    # 
+    # if @attackers.length > 0 
+    #   
+    # end
   end
   
   def players(index)
@@ -162,8 +165,14 @@ class Game
     check_state :started do
       if @priority_player == player
         @priority_player = player == 0 ? 1 : 0
-        if @priority_player == @current_player_index
-          self.next_phase
+        if self.current_phase == :blockers
+          if @priority_player != @current_player_index
+            self.next_phase
+          end
+        else
+          if @priority_player == @current_player_index
+            self.next_phase
+          end
         end
         return true
       end
@@ -193,7 +202,8 @@ class Game
       self.draw_card @current_player_index
       self.next_phase
     elsif phase == :blockers
-      self.phase_manager.jump_to :second_main
+      @priority_player = self.opponent_index
+      #self.phase_manager.jump_to :second_main
     end
   end
   

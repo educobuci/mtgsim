@@ -140,6 +140,24 @@ class PlayerActionTest < MiniTest::Unit::TestCase
     assert_equal :begin_combat, @game.current_phase
   end
   
+  def test_priority_pass_on_blockers
+    prepare_game
+    player = @game.current_player_index
+    opponent = @game.current_player_index == 0 ? 1 : 0
+    
+    @game.phase_manager.jump_to :attackers
+    
+    @game.pass(player)
+    @game.pass(opponent)
+
+    assert_equal @game.priority_player, opponent
+    
+    @game.pass(opponent)
+    @game.pass(player)
+    
+    assert_equal player, @game.priority_player
+  end
+  
   def test_creature_etb_sickness
     prepare_game
     
