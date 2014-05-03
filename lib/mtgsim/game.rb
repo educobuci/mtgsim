@@ -206,7 +206,7 @@ class Game
     elsif phase == :blockers
       @priority_player = self.opponent_index
     elsif phase == :damage
-      self.players(self.opponent_index).life -= @attackers.inject(0){ |damage, c| damage + [0, c.toughness].max }
+      self.players(self.opponent_index).life -= @attackers.inject(0){ |damage, c| damage + [0, c.power].max }
     elsif phase == :end_combat
       @attacker = []
     end
