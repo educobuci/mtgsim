@@ -1,5 +1,5 @@
 class Game
-  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers
+  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers, :winner
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
@@ -209,6 +209,10 @@ class Game
       self.players(self.opponent_index).life -= @attackers.inject(0){ |damage, c| damage + [0, c.power].max }
     elsif phase == :end_combat
       @attacker = []
+    end
+    if self.players(0).life <= 0 || self.players(1).life <= 0
+      self.state = :ended
+      @winner = self.players(0).life >= 0 ? 0 : 1
     end
   end
   

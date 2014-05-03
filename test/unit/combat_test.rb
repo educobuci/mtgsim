@@ -19,23 +19,13 @@ class CombatTest < MiniTest::Unit::TestCase
   end
   
   def test_simple_attack_and_damage
-    @game.current_player.hand = [Cards::Island.new, Cards::DelverofSecrets.new, Cards::DelverofSecrets.new]
-    
-    @game.play_card(@player, 0) # Play land
-    @game.tap_card(@player, 0)  # Tap land
-    @game.play_card(@player, 0) # Play Delver
-    
-    @game.phase_manager.jump_to :end
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
-    @game.phase_manager.jump_to :end
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
+    creature = Cards::DelverofSecrets.new
+    @game.players(@player).board.push(creature)
     
     @game.phase_manager.jump_to :attackers
     
     # Declare Delver as attacker
-    @game.attack(@game.current_player_index, [1])
+    @game.attack(@game.current_player_index, [0])
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
     

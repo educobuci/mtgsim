@@ -141,4 +141,20 @@ class GameStatesTest < MiniTest::Unit::TestCase
     assert_equal 7, @game.current_player.hand.size
     assert_equal :first_main, @game.current_phase
   end
+  
+  def test_game_ended
+    @game.roll_dices
+    @game.start_player(@game.die_winner, @game.die_winner)
+    @game.draw_hands
+    
+    @game.keep(0)
+    @game.keep(1)
+    @game.start()
+    @game.players(@game.current_player_index).life = 0
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
+    
+    assert_equal :ended, @game.state
+    assert_equal @game.winner, @game.opponent_index
+  end
 end
