@@ -135,9 +135,6 @@ class Game
         @attackers.push(card)
       end
     end
-    # if @attackers.length > 0 
-    #       
-    # end
   end
   
   def players(index)
@@ -212,7 +209,7 @@ class Game
     end
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended
-      @winner = self.players(0).life >= 0 ? 0 : 1
+      @winner = self.players(0).life > 0 ? 0 : 1
     end
   end
   
