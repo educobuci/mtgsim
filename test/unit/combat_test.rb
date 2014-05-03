@@ -35,7 +35,7 @@ class CombatTest < MiniTest::Unit::TestCase
     @game.phase_manager.jump_to :attackers
     
     # Declare Delver as attacker
-    @game.attack(@game.current_player_index, 1)
+    @game.attack(@game.current_player_index, [1])
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
     
@@ -43,6 +43,7 @@ class CombatTest < MiniTest::Unit::TestCase
     @game.pass(@game.opponent_index)
     @game.pass(@game.current_player_index)
     
-    assert_equal :damage, @game.current_phase
+    # Damage Phase
+    assert_equal 19, @game.players(@game.opponent_index).life
   end
 end

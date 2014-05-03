@@ -128,13 +128,15 @@ class Game
     end
   end
   
-  def attack(player, cards)
-    # p = @players[player]
-    # 
-    # @attackers = cards.select { |c| !c.sickness }
-    # 
+  def attack(player, cards)    
+    cards.each do |index|
+      card = @players[player].board[index]
+      if !card.nil? && card.kind_of?(Cards::Creature) && !card.sickness
+        @attackers.push(card)
+      end
+    end
     # if @attackers.length > 0 
-    #   
+    #       
     # end
   end
   
@@ -203,7 +205,10 @@ class Game
       self.next_phase
     elsif phase == :blockers
       @priority_player = self.opponent_index
-      #self.phase_manager.jump_to :second_main
+    elsif phase == :damage
+      self.players(self.opponent_index).life -= @attackers.inject(0){ |damage, c| damage + [0, c.toughness].max }
+    elsif phase == :end_combat
+      @attacker = []
     end
   end
   
