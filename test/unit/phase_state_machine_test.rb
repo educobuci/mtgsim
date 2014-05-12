@@ -1,7 +1,7 @@
 require "test_helper"
 require "mtgsim"
 
-class PhaseStateMachineTest < MiniTest::Unit::TestCase
+class PhaseStateMachineTest < Minitest::Test
 
   def setup
     @game_phase = PhaseStateMachine.new

@@ -1,5 +1,5 @@
 class Game
-  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers, :winner
+  attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers, :blockers, :winner
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
     @players = players
@@ -10,6 +10,7 @@ class Game
     self.state = :initialized
     @tapped_to_cast = []
     @attackers = []
+    @blockers = {}
   end
   
   def start_player(player_index, start_index)
@@ -128,11 +129,39 @@ class Game
     end
   end
   
-  def attack(player, cards)    
-    cards.each do |index|
-      card = @players[player].board[index]
-      if !card.nil? && card.kind_of?(Cards::Creature) && !card.sickness
-        @attackers.push(card)
+  def attack(player, card_index)
+    check_phase :attackers do
+      card = @players[player].board[card_index]
+      if !card.nil? && card.kind_of?(Cards::Creature)
+        unless @attackers.include?(card)
+          if !card.sickness
+            @attackers.push(card)
+            card.tap_card()
+          end
+        else
+          @attackers.delete(card)
+          card.untap_card_card()
+        end
+      end
+    end
+  end
+  
+  def block(player, attacker_index, blocker_index)
+    check_phase :blockers do
+      attack_player = player == 0 ? 1 : 0
+      attacker = @players[attack_player].board[attacker_index]
+      blocker = @players[player].board[blocker_index]
+      
+      if  !blocker.nil? && blocker.kind_of?(Cards::Creature) &&
+          !attacker.nil? && attacker.kind_of?(Cards::Creature) &&
+          @attackers.include?(attacker)
+          
+        unless @blockers.include?(blocker)
+          @blockers[blocker] = attacker
+        else
+          @blockers.delete(blocker)
+        end
+        
       end
     end
   end
@@ -203,7 +232,8 @@ class Game
     elsif phase == :blockers
       @priority_player = self.opponent_index
     elsif phase == :damage
-      self.players(self.opponent_index).life -= @attackers.inject(0){ |damage, c| damage + [0, c.power].max }
+      non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
+      self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
     elsif phase == :end_combat
       @attacker = []
     end

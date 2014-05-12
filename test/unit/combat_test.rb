@@ -1,7 +1,7 @@
 require "test_helper"
 require "mtgsim"
 
-class CombatTest < MiniTest::Unit::TestCase
+class CombatTest < Minitest::Test
   def setup
     @game = Game.new [Player.new, Player.new]
     prepare_game
@@ -25,7 +25,7 @@ class CombatTest < MiniTest::Unit::TestCase
     @game.phase_manager.jump_to :attackers
     
     # Declare Delver as attacker
-    @game.attack(@game.current_player_index, [0])
+    @game.attack(@game.current_player_index, 0)
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
     
@@ -35,5 +35,29 @@ class CombatTest < MiniTest::Unit::TestCase
     
     # Damage Phase
     assert_equal 19, @game.players(@game.opponent_index).life
+    assert @game.players(@player).board[0].is_tapped?
+  end
+  
+  def test_simple_block
+    creature = Cards::DelverofSecrets.new
+    @game.players(@player).board.push(creature)
+    
+    block_creature = Cards::DelverofSecrets.new
+    @game.players(@opponent).board.push(block_creature)
+  
+    @game.phase_manager.jump_to :attackers
+    
+    # Declare Delver as attacker
+    @game.attack(@game.current_player_index, 0)
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
+    
+    # Declare Delver as blocker
+    @game.block(@game.opponent_index, 0, 0)
+    @game.pass(@game.opponent_index)
+    @game.pass(@game.current_player_index)
+    
+    # Damage Phase
+    assert_equal 20, @game.players(@game.opponent_index).life
   end
 end

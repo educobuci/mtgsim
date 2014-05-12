@@ -1,7 +1,7 @@
 require "test_helper"
 require "mtgsim"
 
-class ManaPoolTest < MiniTest::Unit::TestCase
+class ManaPoolTest < Minitest::Test
   def setup
     @pool = ManaPool.new
     @default_pool = { black: 0, blue: 0, colorless: 0, green: 0, red: 0, white: 0 }

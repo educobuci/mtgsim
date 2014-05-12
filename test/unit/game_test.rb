@@ -1,7 +1,7 @@
 require "test_helper"
 require "mtgsim"
 
-class GameTest# < MiniTest::Unit::TestCase
+class GameTest# < Minitest::Test
   def setup
     @game = Game.new create_players
   end
