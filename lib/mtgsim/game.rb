@@ -142,6 +142,7 @@ class Game
           @attackers.delete(card)
           card.untap_card_card()
         end
+      else
       end
     end
   end

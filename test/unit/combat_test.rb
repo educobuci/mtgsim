@@ -34,30 +34,31 @@ class CombatTest < Minitest::Test
     @game.pass(@game.current_player_index)
     
     # Damage Phase
-    assert_equal 19, @game.players(@game.opponent_index).life
+    assert_equal 19, @game.players(@opponent).life
     assert @game.players(@player).board[0].is_tapped?
   end
   
   def test_simple_block
-    creature = Cards::DelverofSecrets.new
-    @game.players(@player).board.push(creature)
+    attackers = [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new]
+    @game.players(@player).board += attackers
     
-    block_creature = Cards::DelverofSecrets.new
-    @game.players(@opponent).board.push(block_creature)
+    blocker = Cards::DelverofSecrets.new
+    @game.players(@opponent).board.push(blocker)
   
     @game.phase_manager.jump_to :attackers
     
     # Declare Delver as attacker
-    @game.attack(@game.current_player_index, 0)
-    @game.pass(@game.current_player_index)
+    @game.attack(@player, 0)
+    @game.attack(@player, 1)
+    @game.pass(@player)
     @game.pass(@game.opponent_index)
     
     # Declare Delver as blocker
-    @game.block(@game.opponent_index, 0, 0)
-    @game.pass(@game.opponent_index)
-    @game.pass(@game.current_player_index)
+    @game.block(@opponent, 0, 0)
+    @game.pass(@opponent)
+    @game.pass(@player)
     
     # Damage Phase
-    assert_equal 20, @game.players(@game.opponent_index).life
+    assert_equal 19, @game.players(@opponent).life
   end
 end
