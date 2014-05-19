@@ -36,8 +36,7 @@ class CombatTest < Minitest::Test
   end
   
   def test_simple_attack_and_damage
-    creature = Cards::DelverofSecrets.new
-    @game.players(@player).board.push(creature)
+    prepare_board_to_attack [Cards::DelverofSecrets.new], []
     
     @game.phase_manager.jump_to :attackers
     
@@ -55,7 +54,7 @@ class CombatTest < Minitest::Test
     assert @game.players(@player).board[0].is_tapped?
   end
   
-  def x_test_simple_block 
+  def test_simple_block 
     prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new]
   
     @game.phase_manager.jump_to :attackers
@@ -102,5 +101,31 @@ class CombatTest < Minitest::Test
     assert_equal 1, @blockers[0].damage
     assert_equal 1, @blockers[1].damage
     assert_equal 2, @blockers[2].damage
+  end
+  
+  def test_creature_death
+    prepare_board_to_attack [Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new]
+  
+    @game.phase_manager.jump_to :attackers
+    
+    # Declare Delver as attacker
+    @game.attack(@player, 0)
+    @game.attack(@player, 1)
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    # Declare Delver as blocker
+    @game.block(@opponent, 0, 0)
+    @game.pass(@opponent)
+    @game.pass(@player)
+    
+    # End combat
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    assert_equal 0, @game.players(@player).board.size
+    assert_equal 0, @game.players(@opponent).board.size
+    assert_equal 1, @game.players(@player).graveyard.size
+    assert_equal 1, @game.players(@opponent).graveyard.size
   end
 end

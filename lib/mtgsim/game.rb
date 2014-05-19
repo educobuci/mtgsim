@@ -250,6 +250,14 @@ class Game
         
         attacker.damage += [blocker.power, attacker.toughness].min
       end
+      @players.each do |p|
+        p.board.each_index do |i|
+          c = p.board[i]
+          if c.kind_of?(Cards::Creature) && c.damage >= c.toughness
+            p.graveyard << p.board.slice!(i)
+          end
+        end
+      end
     elsif phase == :end_combat
       @attackers = []
     end

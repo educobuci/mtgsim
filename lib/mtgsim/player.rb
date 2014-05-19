@@ -6,6 +6,7 @@ class Player
     @deck = []
     @library = []
     @board = []
+    @graveyard = []
     @mana_pool = ManaPool.new
     @mulligan = 0
     @life = life
