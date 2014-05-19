@@ -18,6 +18,23 @@ class CombatTest < Minitest::Test
     @game.start()
   end
   
+  def prepare_board_to_attack(attackers, blockers)
+    attackers.each do |attacker|
+      attacker.damage = 0
+      attacker.dealt_damage = 0
+    end
+    @game.players(@player).board += attackers
+    
+    blockers.each do |blocker|
+      blocker.damage = 0
+      blocker.dealt_damage = 0
+    end
+    @game.players(@opponent).board += blockers
+    
+    @attackers = attackers
+    @blockers = blockers
+  end
+  
   def test_simple_attack_and_damage
     creature = Cards::DelverofSecrets.new
     @game.players(@player).board.push(creature)
@@ -38,12 +55,8 @@ class CombatTest < Minitest::Test
     assert @game.players(@player).board[0].is_tapped?
   end
   
-  def test_simple_block
-    attackers = [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new]
-    @game.players(@player).board += attackers
-    
-    blocker = Cards::DelverofSecrets.new
-    @game.players(@opponent).board.push(blocker)
+  def x_test_simple_block 
+    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new]
   
     @game.phase_manager.jump_to :attackers
     
@@ -60,5 +73,34 @@ class CombatTest < Minitest::Test
     
     # Damage Phase
     assert_equal 19, @game.players(@opponent).life
+  end
+  
+  def test_creature_damage
+    prepare_board_to_attack [Cards::GeistofSaintTraft.new, Cards::GeistofSaintTraft.new],
+      [Cards::DelverofSecrets.new,Cards::DelverofSecrets.new,Cards::DelverofSecrets.new]
+  
+    @game.phase_manager.jump_to :attackers
+    
+    @game.attack(@player, 0)
+    @game.attack(@player, 1)
+    @game.pass(@player)
+    @game.pass(@game.opponent_index)
+    
+    # Double block first
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
+    
+    # Chump the other one
+    @game.block(@opponent, 1, 2)
+    
+    @game.pass(@opponent)
+    @game.pass(@player)
+    
+    assert_equal 2, @attackers[0].damage
+    assert_equal 1, @attackers[1].damage
+    
+    assert_equal 1, @blockers[0].damage
+    assert_equal 1, @blockers[1].damage
+    assert_equal 2, @blockers[2].damage
   end
 end

@@ -103,7 +103,11 @@ class Game
         elsif p.mana_pool.pay_cost(p.hand[card_index])
           check_phase [:first_main, :second_main] do
             card = p.hand.slice!(card_index)
-            card.sickness = true if card.kind_of?(Cards::Creature)
+            if card.kind_of?(Cards::Creature)
+              card.sickness = true 
+              card.damage = 0
+              card.dealt_damage = 0
+            end
             p.board << card
             @tapped_to_cast = []
             return true
@@ -235,8 +239,19 @@ class Game
     elsif phase == :damage
       non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
       self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
+      @blockers.each do |blocker, attacker|
+        if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
+          blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
+        else
+          blocker_damage = attacker.power
+        end        
+        blocker.damage += blocker_damage
+        attacker.dealt_damage -= blocker_damage
+        
+        attacker.damage += [blocker.power, attacker.toughness].min
+      end
     elsif phase == :end_combat
-      @attacker = []
+      @attackers = []
     end
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended
