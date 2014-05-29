@@ -101,6 +101,12 @@ class CombatTest < Minitest::Test
     assert_equal 1, @blockers[0].damage
     assert_equal 1, @blockers[1].damage
     assert_equal 2, @blockers[2].damage
+    
+    assert_equal 1, @game.players(@player).board.size
+    assert_equal 1, @game.players(@player).graveyard.size
+    
+    assert_equal 0, @game.players(@opponent).board.size
+    assert_equal 3, @game.players(@opponent).graveyard.size
   end
   
   def test_creature_death
