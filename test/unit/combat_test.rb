@@ -116,7 +116,6 @@ class CombatTest < Minitest::Test
     
     # Declare Delver as attacker
     @game.attack(@player, 0)
-    @game.attack(@player, 1)
     @game.pass(@player)
     @game.pass(@opponent)
     
