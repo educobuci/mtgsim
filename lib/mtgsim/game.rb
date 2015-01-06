@@ -1,4 +1,7 @@
+require 'observer'
+
 class Game
+  include Observable
   attr_reader :phase, :current_player_index, :die_winner, :priority_player, :phase_manager, :attackers, :blockers, :winner
 
   def initialize(players, phase_manager=PhaseStateMachine.new)
@@ -236,20 +239,27 @@ class Game
       self.next_phase
     elsif phase == :blockers
       @priority_player = self.opponent_index
+    elsif phase == :attackers
+      changed
+      callback = Proc.new { |object| puts object }
+      notify_observers :attackers, nil, callback
     elsif phase == :damage
       non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
       self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
-      @blockers.each do |blocker, attacker|
-        if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
-          blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
-        else
-          blocker_damage = attacker.power
-        end        
-        blocker.damage += blocker_damage
-        attacker.dealt_damage -= blocker_damage
+      if @blockers.size > 0
+        @blockers.each do |blocker, attacker|
+          if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
+            blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
+          else
+            blocker_damage = attacker.power
+          end        
+          blocker.damage += blocker_damage
+          attacker.dealt_damage += blocker_damage
         
-        attacker.damage += [blocker.power, attacker.toughness].min
+          attacker.damage += [blocker.power, attacker.toughness].min
+        end
       end
+      
       @players.each do |p|
         dead_creatures = p.board.select do |c|
           c.kind_of?(Cards::Creature) && c.damage >= c.toughness

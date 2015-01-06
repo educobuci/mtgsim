@@ -85,7 +85,7 @@ class CombatTest < Minitest::Test
     @game.pass(@player)
     @game.pass(@game.opponent_index)
     
-    # Double block first
+    # Double block the first
     @game.block(@opponent, 0, 0)
     @game.block(@opponent, 0, 1)
     
@@ -132,5 +132,41 @@ class CombatTest < Minitest::Test
     assert_equal 0, @game.players(@opponent).board.size
     assert_equal 1, @game.players(@player).graveyard.size
     assert_equal 1, @game.players(@opponent).graveyard.size
+  end
+  
+  def test_multi_block_damage
+    prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
+  
+    game_observer = Object.new
+    control = false
+    
+    game_observer.define_singleton_method(:update) do |type, context, callback|
+      if type == :damage
+        
+      end
+      control = true
+    end
+    
+    @game.add_observer(game_observer)
+    
+    @game.phase_manager.jump_to :attackers
+    @game.attack(@player, 0)
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    # Declare Delver as blocker
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
+    @game.pass(@opponent)
+    @game.pass(@player)
+    
+    # End combat
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    assert control
+    assert_equal 3, @attackers[0].damage
+    assert_equal 1, @blockers[0].damage
+    assert_equal 1, @blockers[1].damage
   end
 end
