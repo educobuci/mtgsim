@@ -240,10 +240,6 @@ class Game
       self.next_phase
     when :blockers
       @priority_player = self.opponent_index
-    when :attackers
-      changed
-      callback = Proc.new { |object| puts object }
-      notify_observers :attackers, nil, callback
     when :damage
       non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
       self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
