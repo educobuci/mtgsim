@@ -137,8 +137,6 @@ class CombatTest < Minitest::Test
   def test_multi_block_damage
     prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
     
-    @game.add_observer(game_observer)
-    
     @game.phase_manager.jump_to :attackers
     @game.attack(@player, 0)
     @game.pass(@player)
