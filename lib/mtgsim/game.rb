@@ -174,6 +174,25 @@ class Game
     end
   end
   
+  def assign_damage(player_index, damage_assignment = nil)
+    player = players(player_index)
+    opponent = players(player_index == 0 ? 1 : 0)
+    check_phase :damage do
+      if damage_assignment
+        damage_cards_assigment = damage_assignment.inject({}) do |attackers,attack|
+          attackers[player.board[attack[:attacker]]] = attack[:blockers].inject({}) do |blockers,block|
+            blockers[opponent.board[block[:blocker]]] = block[:damage]
+            blockers
+          end
+          attackers
+        end
+        self.calculate_combat_damage(damage_cards_assigment)
+      else
+        self.calculate_combat_damage(nil)
+      end
+    end
+  end
+  
   def players(index)
     @players[index]
   end
@@ -244,28 +263,12 @@ class Game
       callback = Proc.new { |object| puts object }
       notify_observers :attackers, nil, callback
     elsif phase == :damage
-      non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
-      self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
-      if @blockers.size > 0
-        @blockers.each do |blocker, attacker|
-          if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
-            blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
-          else
-            blocker_damage = attacker.power
-          end
-          blocker.damage += blocker_damage
-          attacker.dealt_damage += blocker_damage
-        
-          attacker.damage += [blocker.power, attacker.toughness].min
-        end
+      multipleBlocks = @blockers.keys.inject({}) do |block_sum,blocker|
+        block_sum[@blockers[blocker]] = (block_sum[@blockers[blocker]] || 0) + 1
+        block_sum
       end
-      
-      @players.each do |p|
-        dead_creatures = p.board.select do |c|
-          c.kind_of?(Cards::Creature) && c.damage >= c.toughness
-        end
-        p.graveyard += dead_creatures
-        p.board -= dead_creatures
+      unless multipleBlocks.values.any?{|v| v > 1}
+        self.calculate_combat_damage
       end
     elsif phase == :end_combat
       @attackers = []
@@ -273,6 +276,39 @@ class Game
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended
       @winner = self.players(0).life > 0 ? 0 : 1
+    end
+  end
+  
+  def calculate_combat_damage(damage_assignment=nil)
+    non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
+    player = self.players(@current_player_index)
+    opponent = self.players(@current_player_index == 0 ? 1 : 0) 
+    self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
+    @blockers.each do |blocker, attacker|
+      if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
+        if damage_assignment
+          if damage_assignment[attacker].has_key?(blocker)
+            blocker_damage = damage_assignment[attacker][blocker]
+          else
+            blocker_damage = 0
+          end
+        else
+          blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
+        end
+      else
+        blocker_damage = attacker.power
+      end
+      blocker.damage += blocker_damage
+      attacker.dealt_damage += blocker_damage
+    
+      attacker.damage += [blocker.power, attacker.toughness].min
+    end
+    @players.each do |p|
+      dead_creatures = p.board.select do |c|
+        c.kind_of?(Cards::Creature) && c.damage >= c.toughness
+      end
+      p.graveyard += dead_creatures
+      p.board -= dead_creatures
     end
   end
   
