@@ -136,16 +136,6 @@ class CombatTest < Minitest::Test
   
   def test_multi_block_damage
     prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
-  
-    game_observer = Object.new
-    control = false
-    
-    game_observer.define_singleton_method(:update) do |type, context, callback|
-      if type == :damage
-        
-      end
-      control = true
-    end
     
     @game.add_observer(game_observer)
     
@@ -164,7 +154,6 @@ class CombatTest < Minitest::Test
     @game.pass(@player)
     @game.pass(@opponent)
     
-    assert control
     assert_equal 3, @attackers[0].damage
     assert_equal 1, @blockers[0].damage
     assert_equal 1, @blockers[1].damage

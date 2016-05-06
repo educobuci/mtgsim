@@ -252,7 +252,7 @@ class Game
             blocker_damage = [attacker.power - attacker.dealt_damage, blocker.toughness].min
           else
             blocker_damage = attacker.power
-          end        
+          end
           blocker.damage += blocker_damage
           attacker.dealt_damage += blocker_damage
         
