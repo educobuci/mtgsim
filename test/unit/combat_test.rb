@@ -137,14 +137,12 @@ class CombatTest < Minitest::Test
   def test_multi_block_damage
     prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
     
-    @game.add_observer(game_observer)
-    
     @game.phase_manager.jump_to :attackers
     @game.attack(@player, 0)
     @game.pass(@player)
     @game.pass(@opponent)
     
-    # Declare Delver as blocker
+    # Declare Delver and Geist as blockers
     @game.block(@opponent, 0, 0)
     @game.block(@opponent, 0, 1)
     @game.pass(@opponent)

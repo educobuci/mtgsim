@@ -230,20 +230,21 @@ class Game
 
   def update(status, phase)
     @priority_player = @current_player_index
-    if phase == :untap
+    case phase
+    when :untap
       self.turn
       self.untap
       self.next_phase
-    elsif phase == :draw
+    when :draw
       self.draw_card @current_player_index
       self.next_phase
-    elsif phase == :blockers
+    when :blockers
       @priority_player = self.opponent_index
-    elsif phase == :attackers
+    when :attackers
       changed
       callback = Proc.new { |object| puts object }
       notify_observers :attackers, nil, callback
-    elsif phase == :damage
+    when :damage
       non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
       self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
       if @blockers.size > 0
@@ -259,7 +260,6 @@ class Game
           attacker.damage += [blocker.power, attacker.toughness].min
         end
       end
-      
       @players.each do |p|
         dead_creatures = p.board.select do |c|
           c.kind_of?(Cards::Creature) && c.damage >= c.toughness
@@ -267,7 +267,7 @@ class Game
         p.graveyard += dead_creatures
         p.board -= dead_creatures
       end
-    elsif phase == :end_combat
+    when :end_combat
       @attackers = []
     end
     if self.players(0).life <= 0 || self.players(1).life <= 0
@@ -275,7 +275,7 @@ class Game
       @winner = self.players(0).life > 0 ? 0 : 1
     end
   end
-  
+
   def turn
     if @current_player_index == 1
       @current_player_index = 0
