@@ -94,6 +94,7 @@ class CombatTest < Minitest::Test
     
     @game.pass(@opponent)
     @game.pass(@player)
+    @game.assign_damage(@player)
     
     assert_equal 2, @attackers[0].damage
     assert_equal 1, @attackers[1].damage
@@ -147,6 +148,7 @@ class CombatTest < Minitest::Test
     @game.block(@opponent, 0, 1)
     @game.pass(@opponent)
     @game.pass(@player)
+    @game.assign_damage(@player)
     
     # End combat
     @game.pass(@player)
@@ -155,5 +157,30 @@ class CombatTest < Minitest::Test
     assert_equal 3, @attackers[0].damage
     assert_equal 1, @blockers[0].damage
     assert_equal 1, @blockers[1].damage
+  end
+  
+  def test_damage_assignment
+    prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
+    
+    @game.phase_manager.jump_to :attackers
+    @game.attack(@player, 0)
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    # Declare Delver as blocker
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
+    @game.pass(@opponent)
+    @game.pass(@player)
+    
+    @game.assign_damage(@player, [{attacker: 0, blockers: [{blocker: 1, damage: 2}]}])
+    
+    # End combat
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    assert_equal 3, @attackers[0].damage
+    assert_equal 0, @blockers[0].damage
+    assert_equal 2, @blockers[1].damage
   end
 end
