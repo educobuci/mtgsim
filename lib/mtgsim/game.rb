@@ -179,9 +179,9 @@ class Game
     opponent = players(player_index == 0 ? 1 : 0)
     check_phase :damage do
       if damage_assignment
-        damage_cards_assigment = damage_assignment.inject({}) do |attackers,attack|
-          attackers[player.board[attack[:attacker]]] = attack[:blockers].inject({}) do |blockers,block|
-            blockers[opponent.board[block[:blocker]]] = block[:damage]
+        damage_cards_assigment = damage_assignment.keys.inject({}) do |attackers,attacker|
+          attackers[player.board[attacker]] = damage_assignment[attacker].keys.inject({}) do |blockers,blocker|
+            blockers[opponent.board[blocker]] = damage_assignment[attacker][blocker]
             blockers
           end
           attackers
