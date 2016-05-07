@@ -184,4 +184,32 @@ class CombatTest < Minitest::Test
     assert_equal 0, @blockers[0].damage
     assert_equal 2, @blockers[1].damage
   end
+  
+  def test_creatures_damage_clean_after_a_turn
+    prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
+    
+    @game.phase_manager.jump_to :attackers
+    @game.attack(@player, 0)
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    # Declare Delver and Geist as blockers
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
+    @game.pass(@opponent)
+    @game.pass(@player)
+    @game.assign_damage(@player)
+    
+    # End combat
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    @game.phase_manager.jump_to :end
+    
+    # End turn
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    assert_equal 0, @game.players(@opponent).board[0].damage
+  end
 end

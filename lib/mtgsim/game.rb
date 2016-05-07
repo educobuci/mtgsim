@@ -72,7 +72,7 @@ class Game
   end
   
   def opponent_player
-    @players[opponent_index]
+    @players[self.opponent_index()]
   end
   
   def opponent_index
@@ -93,25 +93,23 @@ class Game
   def play_card(player, card_index)
     check_state :started do
       if player == @current_player_index
-        p = @players[player]
-        
-        if p.hand[card_index].kind_of?(Cards::Land)
+        if current_player.hand[card_index].kind_of?(Cards::Land)
           check_phase [:first_main, :second_main] do
             unless @land_fall
-              p.board << p.hand.slice!(card_index)
+              current_player.board << current_player.hand.slice!(card_index)
               @land_fall = true
               return true
             end
           end
-        elsif p.mana_pool.pay_cost(p.hand[card_index])
+        elsif current_player.mana_pool.pay_cost(current_player.hand[card_index])
           check_phase [:first_main, :second_main] do
-            card = p.hand.slice!(card_index)
+            card = current_player.hand.slice!(card_index)
             if card.kind_of?(Cards::Creature)
               card.sickness = true 
               card.damage = 0
               card.dealt_damage = 0
             end
-            p.board << card
+            current_player.board << card
             @tapped_to_cast = []
             return true
           end
@@ -122,9 +120,9 @@ class Game
     return false
   end
   
-  def tap_card(player, card)
+  def tap_card(player_index, card)
     check_state :started do
-      p = @players[player]
+      p = players(player_index)
       c = p.board[card]
       unless c.is_tapped?
         c.tap_card
@@ -136,9 +134,9 @@ class Game
     end
   end
   
-  def attack(player, card_index)
+  def attack(player_index, card_index)
     check_phase :attackers do
-      card = @players[player].board[card_index]
+      card = players(player_index).board[card_index]
       if !card.nil? && card.kind_of?(Cards::Creature)
         unless @attackers.include?(card)
           if !card.sickness
@@ -154,11 +152,11 @@ class Game
     end
   end
   
-  def block(player, attacker_index, blocker_index)
+  def block(player_index, attacker_index, blocker_index)
     check_phase :blockers do
-      attack_player = player == 0 ? 1 : 0
-      attacker = @players[attack_player].board[attacker_index]
-      blocker = @players[player].board[blocker_index]
+      attack_player = player_index == 0 ? 1 : 0
+      attacker = players(attack_player).board[attacker_index]
+      blocker = players(player_index).board[blocker_index]
       
       if  !blocker.nil? && blocker.kind_of?(Cards::Creature) &&
           !attacker.nil? && attacker.kind_of?(Cards::Creature) &&
@@ -216,10 +214,10 @@ class Game
     dices_result
   end
   
-  def pass(player)
+  def pass(player_index)
     check_state :started do
-      if @priority_player == player
-        @priority_player = player == 0 ? 1 : 0
+      if @priority_player == player_index
+        @priority_player = player_index == 0 ? 1 : 0
         if self.current_phase == :blockers
           if @priority_player != @current_player_index
             self.next_phase
@@ -273,6 +271,7 @@ class Game
       end
     when :end_combat
       @attackers = []
+      @blockers = []
     end
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended
@@ -282,9 +281,7 @@ class Game
   
   def calculate_combat_damage(damage_assignment=nil)
     non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
-    player = self.players(@current_player_index)
-    opponent = self.players(@current_player_index == 0 ? 1 : 0) 
-    self.players(self.opponent_index).life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
+    opponent_player.life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
     @blockers.each do |blocker, attacker|
       if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
         if damage_assignment
@@ -319,6 +316,8 @@ class Game
     else
       @current_player_index = 1
     end
+    self.current_player.board.each {|c| c.damage = 0 if c.kind_of? Cards::Creature }
+    self.opponent_player.board.each {|c| c.damage = 0 if c.kind_of? Cards::Creature }
     @land_fall = false
   end
   
