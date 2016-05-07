@@ -173,6 +173,7 @@ class CombatTest < Minitest::Test
     @game.pass(@opponent)
     @game.pass(@player)
     
+    # attacker deals => { to blocker => damage }
     @game.assign_damage(@player, { 0 => { 1 => 2 } })
     
     # End combat
