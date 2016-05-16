@@ -21,6 +21,8 @@ class Game
       if @die_winner == player_index
         self.state = :start_player
         @current_player_index = start_index
+        changed
+        notify_observers :start_player, start_index
       end
     end
   end
