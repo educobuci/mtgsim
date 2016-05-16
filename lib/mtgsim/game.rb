@@ -226,6 +226,8 @@ class Game
   def pass(player_index)
     check_state :started do
       if @priority_player == player_index
+        changed
+        notify_observers :pass, player_index
         @priority_player = player_index == 0 ? 1 : 0
         if self.current_phase == :blockers
           if @priority_player != @current_player_index

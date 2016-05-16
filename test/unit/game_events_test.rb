@@ -57,6 +57,12 @@ class GameEventsTest < Minitest::Test
     assert_equal :changed_phase, @observer.state
     assert_equal :first_main, @observer.value
   end
+  def test_phase_pass
+    start_game
+    @game.pass(@game.current_player_index)
+    assert_equal :pass, @observer.state
+    assert_equal @game.current_player_index, @observer.value
+  end
 end
 
 class Observer
