@@ -211,6 +211,9 @@ class Game
     dices_result[@die_winner] = rand(2..6)
     dices_result[(@die_winner == 0 ? 1 : 0)] = rand(2..dices_result[@die_winner]) - 1
     
+    changed
+    notify_observers :dices, dices_result
+    
     dices_result
   end
   
