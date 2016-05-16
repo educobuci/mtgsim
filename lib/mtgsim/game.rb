@@ -51,9 +51,11 @@ class Game
   def keep(player_index)
     check_state :hand do
       @players[player_index].keep = true
+      changed
+      notify_observers :keep, player_index
       if @players.count {|p| p.keep == true } == 2
         self.state = :keep
-      end      
+      end
     end
   end
   
@@ -65,6 +67,8 @@ class Game
         player.library = player.library.shuffle
         player.hand = []
         self.draw_card player_index, 7 - player.mulligan
+        changed
+        notify_observers :mulligan, player_index, player.mulligan
       end
     end
   end
