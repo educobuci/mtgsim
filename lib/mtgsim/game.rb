@@ -99,6 +99,8 @@ class Game
   def play_card(player, card_index)
     check_state :started do
       if player == @current_player_index
+        changed
+        notify_observers :play_card, player, current_player.hand[card_index]
         if current_player.hand[card_index].kind_of?(Cards::Land)
           check_phase [:first_main, :second_main] do
             unless @land_fall

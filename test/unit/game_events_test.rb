@@ -63,6 +63,15 @@ class GameEventsTest < Minitest::Test
     assert_equal :pass, @observer.state
     assert_equal @game.current_player_index, @observer.value
   end
+  def test_play_card
+    start_game
+    island = Cards::Island.new
+    @game.current_player.hand = [island]
+    @game.play_card(@game.current_player_index, 0)
+    assert_equal :play_card, @observer.state
+    assert_equal @game.current_player_index, @observer.value[0]
+    assert_equal island, @observer.value[1]
+  end
 end
 
 class Observer
