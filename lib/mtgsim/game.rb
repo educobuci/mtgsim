@@ -99,28 +99,31 @@ class Game
   def play_card(player, card_index)
     check_state :started do
       if player == @current_player_index
-        changed
-        notify_observers :play_card, player, current_player.hand[card_index]
+        played_card = nil
         if current_player.hand[card_index].kind_of?(Cards::Land)
           check_phase [:first_main, :second_main] do
             unless @land_fall
-              current_player.board << current_player.hand.slice!(card_index)
+              played_card = current_player.hand.slice!(card_index)
+              current_player.board << played_card
               @land_fall = true
-              return true
             end
           end
         elsif current_player.mana_pool.pay_cost(current_player.hand[card_index])
           check_phase [:first_main, :second_main] do
-            card = current_player.hand.slice!(card_index)
-            if card.kind_of?(Cards::Creature)
-              card.sickness = true 
-              card.damage = 0
-              card.dealt_damage = 0
+            played_card = current_player.hand.slice!(card_index)
+            if played_card.kind_of?(Cards::Creature)
+              played_card.sickness = true 
+              played_card.damage = 0
+              played_card.dealt_damage = 0
             end
-            current_player.board << card
+            current_player.board << played_card
             @tapped_to_cast = []
-            return true
           end
+        end
+        unless played_card.nil?
+          changed
+          notify_observers :play_card, player, played_card
+          return true
         end
       end
     end
@@ -138,6 +141,8 @@ class Game
           @tapped_to_cast << c
           p.mana_pool.add c.color
         end
+        changed
+        notify_observers :tap_card, player_index, card
       end
     end
   end
@@ -150,10 +155,12 @@ class Game
           if !card.sickness
             @attackers.push(card)
             card.tap_card()
+            changed
+            notify_observers :attack, player_index, card_index
           end
         else
           @attackers.delete(card)
-          card.untap_card_card()
+          card.untap_card()
         end
       else
       end

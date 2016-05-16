@@ -72,6 +72,32 @@ class GameEventsTest < Minitest::Test
     assert_equal @game.current_player_index, @observer.value[0]
     assert_equal island, @observer.value[1]
   end
+  def test_tap_card
+    start_game
+    island = Cards::Island.new
+    @game.current_player.hand = [island]
+    @game.play_card(@game.current_player_index, 0)
+    @game.tap_card(@game.current_player_index, 0)
+    assert_equal :tap_card, @observer.state
+    assert_equal @game.current_player_index, @observer.value[0]
+    assert_equal 0, @observer.value[1]
+  end
+  def test_attack
+    start_game
+    attackers = [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
+    attackers.each do |a|
+      a.damage = 0
+      a.dealt_damage = 0
+    end
+    @game.current_player.board += attackers
+    @game.phase_manager.jump_to :attackers
+    @game.attack(@game.current_player_index, 0)
+    assert_equal :attack, @observer.state
+    assert_equal @game.current_player_index, @observer.value[0]
+    assert_equal 0, @observer.value[1]
+    @game.attack(@game.current_player_index, 1)
+    assert_equal 1, @observer.value[1]
+  end
 end
 
 class Observer
