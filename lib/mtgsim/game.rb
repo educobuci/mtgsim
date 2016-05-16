@@ -256,6 +256,8 @@ class Game
 
   def update(status, phase)
     @priority_player = @current_player_index
+    changed
+    notify_observers status, phase
     case phase
     when :untap
       self.turn
