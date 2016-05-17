@@ -205,6 +205,8 @@ class Game
       else
         self.calculate_combat_damage(nil)
       end
+      changed
+      notify_observers :assign_damage, damage_assignment
     end
   end
   

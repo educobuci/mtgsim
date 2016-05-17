@@ -121,6 +121,21 @@ class GameEventsTest < Minitest::Test
     @game.block @opponent, 0, 0
     assert_equal :block, @observer.state
   end
+  def test_assign_damage
+    start_game
+    prepare_board_to_attack [Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new]
+    @game.phase_manager.jump_to :attackers
+    @game.attack @player, 0
+    @game.pass @player
+    @game.pass @opponent
+    @game.block @opponent, 0, 0
+    @game.pass @opponent
+    @game.pass @player
+    assignment = { 0 => { 1 => 1 } }
+    @game.assign_damage @player, assignment
+    assert_equal :assign_damage, @observer.state
+    assert_equal assignment, @observer.value
+  end
 end
 
 class Observer
