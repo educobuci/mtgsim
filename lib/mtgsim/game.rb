@@ -327,12 +327,18 @@ class Game
     
       attacker.damage += [blocker.power, attacker.toughness].min
     end
-    @players.each do |p|
+    deaths = {0 => [], 1 => []}
+    @players.each_with_index do |p,index|
       dead_creatures = p.board.select do |c|
         c.kind_of?(Cards::Creature) && c.damage >= c.toughness
       end
+      deaths[index] = p.board.map { |c| p.board.find_index(c) }
       p.graveyard += dead_creatures
       p.board -= dead_creatures
+    end
+    if deaths[0].size > 0 || deaths[1].size > 0
+      changed
+      notify_observers :creature_die, deaths
     end
   end
   
