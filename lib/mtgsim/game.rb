@@ -179,6 +179,8 @@ class Game
           
         unless @blockers.include?(blocker)
           @blockers[blocker] = attacker
+          changed
+          notify_observers :block, attacker_index, blocker_index
         else
           @blockers.delete(blocker)
         end

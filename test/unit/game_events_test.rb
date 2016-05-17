@@ -18,6 +18,24 @@ class GameEventsTest < Minitest::Test
     die_loser = @game.die_winner == 0 ? 1 : 0
     @game.keep die_loser
     @game.start
+    @player = @game.current_player_index
+    @opponent = @game.current_player_index == 0 ? 1 : 0
+  end
+  def prepare_board_to_attack(attackers, blockers)
+    attackers.each do |attacker|
+      attacker.damage = 0
+      attacker.dealt_damage = 0
+    end
+    @game.players(@player).board += attackers
+    
+    blockers.each do |blocker|
+      blocker.damage = 0
+      blocker.dealt_damage = 0
+    end
+    @game.players(@opponent).board += blockers
+    
+    @attackers = attackers
+    @blockers = blockers
   end
   
   def test_dices_event
@@ -84,19 +102,24 @@ class GameEventsTest < Minitest::Test
   end
   def test_attack
     start_game
-    attackers = [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
-    attackers.each do |a|
-      a.damage = 0
-      a.dealt_damage = 0
-    end
-    @game.current_player.board += attackers
+    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new], []
     @game.phase_manager.jump_to :attackers
-    @game.attack(@game.current_player_index, 0)
+    @game.attack @player, 0
     assert_equal :attack, @observer.state
-    assert_equal @game.current_player_index, @observer.value[0]
+    assert_equal @player, @observer.value[0]
     assert_equal 0, @observer.value[1]
-    @game.attack(@game.current_player_index, 1)
+    @game.attack @player, 1
     assert_equal 1, @observer.value[1]
+  end
+  def test_block
+    start_game
+    prepare_board_to_attack [Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new]
+    @game.phase_manager.jump_to :attackers
+    @game.attack @player, 0
+    @game.pass @player
+    @game.pass @opponent
+    @game.block @opponent, 0, 0
+    assert_equal :block, @observer.state
   end
 end
 
