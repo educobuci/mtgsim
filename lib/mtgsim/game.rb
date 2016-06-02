@@ -14,6 +14,9 @@ class Game
     @tapped_to_cast = []
     @attackers = []
     @blockers = {}
+    (0..1).each do |p|
+      @players[p].library = @players[p].deck.shuffle.dup
+    end
   end
   
   def start_player(player_index, start_index)
@@ -42,7 +45,6 @@ class Game
   
   def draw_hands
     (0..1).each do |p|
-      @players[p].library = @players[p].deck.shuffle.dup
       self.draw_card p, 7
     end
     self.state = :hand

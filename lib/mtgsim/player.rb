@@ -1,6 +1,5 @@
 class Player
-  attr_accessor :mulligan, :keep, :hand, :deck, :library, :graveyard, :board, :mana_pool, :life
-    :id
+  attr_accessor :mulligan, :keep, :hand, :deck, :library, :graveyard, :board, :mana_pool, :life, :id
   def initialize (life = 20)
     @hand = []
     @deck = []
