@@ -67,6 +67,8 @@ class GameStatesTest < Minitest::Test
     @game.draw_hands
     assert_equal 7, @game.players(0).hand.size
     assert_equal 7, @game.players(1).hand.size
+    assert_equal 53, @game.players(0).library.size
+    assert_equal 53, @game.players(1).library.size 
     assert_equal :hand, @game.state
   end
   
@@ -94,6 +96,7 @@ class GameStatesTest < Minitest::Test
     @game.draw_hands
     @game.mulligan(0)
     assert_equal 6, @game.players(0).hand.size
+    assert_equal 54, @game.players(0).library.size
   end
   
   def test_mulligan_limit
@@ -106,6 +109,7 @@ class GameStatesTest < Minitest::Test
     end
     
     assert_equal 0, @game.players(0).hand.size
+    assert_equal 60, @game.players(0).library.size
   end
   
   def test_mulligan_only_if_not_keep

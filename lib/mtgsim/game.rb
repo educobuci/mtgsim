@@ -66,7 +66,7 @@ class Game
       player = players(player_index)
       unless player.keep
         player.mulligan += 1
-        player.library = player.library.shuffle
+        player.library = (player.library + player.hand).shuffle
         player.hand = []
         self.draw_card player_index, 7 - player.mulligan
         changed
