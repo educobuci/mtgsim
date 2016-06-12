@@ -285,6 +285,8 @@ class Game
       self.next_phase
     when :blockers
       @priority_player = self.opponent_index
+      changed
+      notify_observers status, phase
     when :attackers
       changed
       callback = Proc.new { |object| puts object }
