@@ -242,8 +242,8 @@ class Game
     check_state :started do
       if @priority_player == player_index
         changed
-        notify_observers :pass, player_index
         @priority_player = player_index == 0 ? 1 : 0
+        notify_observers :pass, player_index
         if self.current_phase == :blockers
           if @priority_player != @current_player_index
             self.next_phase
@@ -300,6 +300,8 @@ class Game
     when :end_combat
       @attackers = []
       @blockers = []
+    when :cleanup
+      self.next_phase
     end
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended

@@ -40,7 +40,8 @@ class PhaseStateMachine
       :damage => :end_combat,
       :end_combat => :second_main,
       :second_main => :end,
-      :end => :untap }
+      :end => :cleanup,
+      :cleanup => :untap }
   end
 
 end
