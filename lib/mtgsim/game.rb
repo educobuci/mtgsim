@@ -287,10 +287,6 @@ class Game
       @priority_player = self.opponent_index
       changed
       notify_observers status, phase
-    when :attackers
-      changed
-      callback = Proc.new { |object| puts object }
-      notify_observers :attackers, nil, callback
     when :damage
       multipleBlocks = @blockers.keys.inject({}) do |block_sum,blocker|
         block_sum[@blockers[blocker]] = (block_sum[@blockers[blocker]] || 0) + 1
@@ -301,7 +297,7 @@ class Game
       end
     when :end_combat
       @attackers = []
-      @blockers = []
+      @blockers = {}
     when :cleanup
       self.next_phase
     end

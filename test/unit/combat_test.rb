@@ -36,12 +36,38 @@ class CombatTest < Minitest::Test
   end
   
   def test_simple_attack_and_damage
-    prepare_board_to_attack [Cards::DelverofSecrets.new], []
+    @game.current_player.hand << Cards::DelverofSecrets.new
+    @game.current_player.hand << Cards::Island.new
+
+    @game.play_card(@game.current_player_index, 8)
+    @game.tap_card(@game.current_player_index, 0)
+    @game.play_card(@game.current_player_index, 7)
+
+    @game.phase_manager.jump_to :end
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
+    @game.phase_manager.jump_to :end
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
     
-    @game.phase_manager.jump_to :attackers
+    assert_equal :first_main, @game.current_phase
+    
+    #begin combat
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)
+    
+    #attack
+    @game.pass(@game.current_player_index)
+    @game.pass(@game.opponent_index)    
+    
+    assert_equal :attackers, @game.current_phase
     
     # Declare Delver as attacker
-    @game.attack(@game.current_player_index, 0)
+    @game.attack(@game.current_player_index, 1)
+    assert_equal 1, @game.attackers.size
+    
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
     
@@ -51,7 +77,7 @@ class CombatTest < Minitest::Test
     
     # Damage Phase
     assert_equal 19, @game.players(@opponent).life
-    assert @game.players(@player).board[0].is_tapped?
+    assert @game.players(@player).board[1].is_tapped?
   end
   
   def test_simple_block 
