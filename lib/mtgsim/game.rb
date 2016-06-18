@@ -333,7 +333,7 @@ class Game
       dead_creatures = p.board.select do |c|
         c.kind_of?(Cards::Creature) && c.damage >= c.toughness
       end
-      deaths[index] = p.board.map { |c| p.board.find_index(c) }
+      deaths[index] = dead_creatures.map { |c| p.board.find_index(c) }
       p.graveyard += dead_creatures
       p.board -= dead_creatures
     end

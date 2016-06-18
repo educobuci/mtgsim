@@ -110,6 +110,8 @@ class GameEventsTest < Minitest::Test
     assert_equal 0, @observer.value[1]
     @game.attack @player, 1
     assert_equal 1, @observer.value[1]
+    4.times { @game.pass(@game.priority_player) }
+    refute_equal :creature_die, @observer.state
   end
   def test_block
     start_game
