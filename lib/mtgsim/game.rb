@@ -282,7 +282,6 @@ class Game
       self.next_phase
     when :draw
       self.draw_card @current_player_index
-      self.next_phase
     when :blockers
       @priority_player = self.opponent_index
       changed

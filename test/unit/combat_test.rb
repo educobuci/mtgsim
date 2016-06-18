@@ -35,6 +35,12 @@ class CombatTest < Minitest::Test
     @blockers = blockers
   end
   
+  def pass_until(phase)
+    while @game.current_phase != phase
+      2.times { @game.pass(@game.priority_player) }
+    end    
+  end
+  
   def test_simple_attack_and_damage
     @game.current_player.hand << Cards::DelverofSecrets.new
     @game.current_player.hand << Cards::Island.new
@@ -43,26 +49,14 @@ class CombatTest < Minitest::Test
     @game.tap_card(@game.current_player_index, 0)
     @game.play_card(@game.current_player_index, 7)
 
-    @game.phase_manager.jump_to :end
+    pass_until(:end)
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
-    @game.phase_manager.jump_to :end
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
+    pass_until(:end)
     @game.pass(@game.current_player_index)
     @game.pass(@game.opponent_index)
     
-    assert_equal :first_main, @game.current_phase
-    
-    #begin combat
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
-    
-    #attack
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)    
-    
-    assert_equal :attackers, @game.current_phase
+    pass_until(:attackers)
     
     # Declare Delver as attacker
     @game.attack(@game.current_player_index, 1)
