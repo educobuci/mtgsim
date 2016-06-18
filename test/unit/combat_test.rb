@@ -73,7 +73,8 @@ class CombatTest < Minitest::Test
   end
   
   def test_simple_block 
-    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new], [Cards::DelverofSecrets.new]
+    prepare_board_to_attack [Cards::DelverofSecrets.new, Cards::DelverofSecrets.new, Cards::DelverofSecrets.new],
+      [Cards::DelverofSecrets.new]
   
     @game.phase_manager.jump_to :attackers
     
@@ -81,6 +82,7 @@ class CombatTest < Minitest::Test
     @game.attack(@player, 0)
     @game.attack(@player, 1)
     @game.pass(@player)
+    @game.attack(@player, 2)
     @game.pass(@game.opponent_index)
     
     # Declare Delver as blocker

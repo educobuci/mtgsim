@@ -152,7 +152,7 @@ class Game
   def attack(player_index, card_index)
     check_phase :attackers do
       card = players(player_index).board[card_index]
-      if !card.nil? && card.kind_of?(Cards::Creature)
+      if !card.nil? && card.kind_of?(Cards::Creature) && player_index == self.priority_player
         unless @attackers.include?(card)
           if !card.sickness
             @attackers.push(card)
