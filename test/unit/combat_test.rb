@@ -50,11 +50,9 @@ class CombatTest < Minitest::Test
     @game.play_card(@game.current_player_index, 7)
 
     pass_until(:end)
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
+    2.times { @game.pass(@game.priority_player) }
     pass_until(:end)
-    @game.pass(@game.current_player_index)
-    @game.pass(@game.opponent_index)
+    2.times { @game.pass(@game.priority_player) }
     
     pass_until(:attackers)
     
