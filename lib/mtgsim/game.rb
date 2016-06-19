@@ -273,19 +273,13 @@ class Game
 
   def update(status, phase)
     @priority_player = @current_player_index
-    changed
-    notify_observers status, phase
+    
+    # Before update
     case phase
-    when :untap
-      self.turn
-      self.untap
-      self.next_phase
     when :draw
       self.draw_card @current_player_index
     when :blockers
       @priority_player = self.opponent_index
-      changed
-      notify_observers status, phase
     when :damage
       multipleBlocks = @blockers.keys.inject({}) do |block_sum,blocker|
         block_sum[@blockers[blocker]] = (block_sum[@blockers[blocker]] || 0) + 1
@@ -297,12 +291,26 @@ class Game
     when :end_combat
       @attackers = []
       @blockers = {}
-    when :cleanup
-      self.next_phase
     end
+    
+    # Game ending condition
     if self.players(0).life <= 0 || self.players(1).life <= 0
       self.state = :ended
       @winner = self.players(0).life > 0 ? 0 : 1
+    end
+    
+    # Notify update
+    changed
+    notify_observers status, phase
+    
+    # After update
+    case phase
+    when :untap
+      self.turn
+      self.untap
+      self.next_phase
+    when :cleanup
+      self.next_phase
     end
   end
   
