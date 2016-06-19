@@ -21,7 +21,7 @@ class GameStatesTest < Minitest::Test
   end
   
   def test_die_roll_winner_starting
-    result = @game.roll_dices
+    @game.roll_dices
     
     @game.start_player(@game.die_winner, @game.die_winner)
     assert_equal :start_player, @game.state
@@ -30,7 +30,7 @@ class GameStatesTest < Minitest::Test
   end
   
   def test_die_roll_winner_not_start
-    result = @game.roll_dices
+    @game.roll_dices
     winner = @game.die_winner
     loser = @game.die_winner == 0 ? 1 : 0
     
@@ -41,8 +41,8 @@ class GameStatesTest < Minitest::Test
   end
   
   def test_die_roll_loser_cant_decide
-    result = @game.roll_dices
-    winner = @game.die_winner
+    @game.roll_dices
+    @game.die_winner
     loser = @game.die_winner == 0 ? 1 : 0
     
     @game.start_player(loser, loser)
