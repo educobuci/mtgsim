@@ -163,6 +163,8 @@ class Game
         else
           @attackers.delete(card)
           card.untap_card()
+          changed
+          notify_observers :remove_attack, player_index, card_index
         end
       else
       end
