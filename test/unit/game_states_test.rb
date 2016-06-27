@@ -161,4 +161,8 @@ class GameStatesTest < Minitest::Test
     assert_equal :ended, @game.state
     assert_equal @game.winner, @game.opponent_index
   end
+  
+  def test_card_id
+    refute_equal Cards::SnapcasterMage.new.game_id, Cards::SnapcasterMage.new.game_id
+  end
 end

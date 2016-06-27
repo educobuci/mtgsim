@@ -1,6 +1,7 @@
+require "securerandom"
 module Cards
   class Card
-    attr_reader :name, :set, :id, :types, :subtypes
+    attr_reader :name, :set, :id, :types, :subtypes, :game_id
     attr_accessor :image
     
     def initialize(name, set, id, types, subtypes)
@@ -10,6 +11,7 @@ module Cards
       @id = id
       @types = types
       @subtypes = subtypes
+      @game_id = SecureRandom.uuid
     end
     def tap_card
       @tapped = true
