@@ -187,12 +187,12 @@ class Game
           @attackers.include?(attacker) &&
           player_index == self.priority_player && player_index != self.current_player_index
           
-        unless @blockers.include?(blocker)
-          @blockers[blocker] = attacker
+        unless @blockers.include?(blocker_index)
+          @blockers[blocker_index] = attacker
           changed
           notify_observers :block, attacker_index, blocker_index
         else
-          @blockers.delete(blocker)
+          @blockers.delete(blocker_index)
         end
         
       end
@@ -325,7 +325,8 @@ class Game
   def calculate_combat_damage(damage_assignment=nil)
     non_blocked = @attackers.select{|attacker| !@blockers.has_value?(attacker)}
     opponent_player.life -= non_blocked.inject(0){ |damage, c| damage + [0, c.power].max }
-    @blockers.each do |blocker, attacker|
+    @blockers.each do |blocker_index, attacker|
+      blocker = opponent_player.board[blocker_index]
       if @blockers.map{ |k, v| v == attacker ? k : nil }.compact.size > 1
         if damage_assignment
           if damage_assignment[attacker].has_key?(blocker)
