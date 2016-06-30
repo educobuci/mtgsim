@@ -179,6 +179,27 @@ class CombatTest < Minitest::Test
     assert_equal 1, @blockers[1].damage
   end
   
+  def test_multi_block_assign_validation
+    prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
+    
+    @game.phase_manager.jump_to :attackers
+    @game.attack(@player, 0)
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    # Declare Delver and Geist as blockers
+    @game.block(@opponent, 0, 0)
+    @game.block(@opponent, 0, 1)
+    @game.pass(@opponent)
+    @game.pass(@player)
+    
+    # Should not got to End combat
+    @game.pass(@player)
+    @game.pass(@opponent)
+    
+    assert_equal :damage, @game.current_phase
+  end
+  
   def test_damage_assignment
     prepare_board_to_attack [Cards::GeistofSaintTraft.new], [Cards::DelverofSecrets.new, Cards::GeistofSaintTraft.new]
     

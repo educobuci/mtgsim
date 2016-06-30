@@ -248,9 +248,9 @@ class Game
   
   def pass(player_index)
     check_state :started do
-      if @priority_player == player_index
-        changed
+      if validate_pass_conditions(player_index)
         @priority_player = player_index == 0 ? 1 : 0
+        changed
         notify_observers :pass, player_index
         if self.current_phase == :blockers
           if @priority_player != @current_player_index
@@ -265,6 +265,18 @@ class Game
       end
     end
     return false
+  end
+  
+  def validate_pass_conditions(player_index)
+    case current_phase
+    when :damage
+      multipleBlocks = @blockers.keys.inject({}) do |block_sum,blocker|
+        block_sum[@blockers[blocker]] = (block_sum[@blockers[blocker]] || 0) + 1
+        block_sum
+      end
+      return !multipleBlocks.values.any?{|v| v > 1}
+    end
+    return @priority_player == player_index
   end
   
   def check_phase(phases, &block)
